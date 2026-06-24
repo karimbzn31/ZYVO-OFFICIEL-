@@ -15,6 +15,12 @@ import Auth from './pages/Auth'
 import ProviderDetail from './pages/ProviderDetail'
 import ProviderDashboard from './pages/ProviderDashboard'
 import CommandPalette from './components/CommandPalette'
+import About from './pages/About'
+import HowItWorks from './pages/HowItWorks'
+import Cities from './pages/Cities'
+import Contact from './pages/Contact'
+import Blog from './pages/Blog'
+import CategoryPage from './pages/CategoryPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -74,6 +80,12 @@ export default function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/provider/:id" element={<ProviderDetail />} />
                 <Route path="/provider/dashboard" element={<ProviderDashboard />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/cities" element={<Cities />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/category/:slug" element={<CategoryPage />} />
               </Routes>
             </PageTransition>
           </main>

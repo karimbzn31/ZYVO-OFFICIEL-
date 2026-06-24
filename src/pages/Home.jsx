@@ -249,7 +249,7 @@ export default function Home() {
           <div className="max-w-4xl">
             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-zyvo-muted mb-8 ${visible.hero ? 'animate-fade-in-up' : 'opacity-0'}`}>
               <Sparkles className="w-4 h-4 text-zyvo-gold" />
-              Le marketplace de services en Algérie
+              Des pros vérifiés en Algérie
             </div>
 
             <h1 className={`text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-extrabold leading-[0.92] sm:leading-[0.95] tracking-tight ${visible.hero ? 'animate-fade-in-up animate-delay-100' : 'opacity-0'}`}>
@@ -260,9 +260,9 @@ export default function Home() {
             </h1>
 
             <p className={`text-lg sm:text-xl text-zyvo-muted mt-6 max-w-2xl leading-relaxed ${visible.hero ? 'animate-fade-in-up animate-delay-200' : 'opacity-0'}`}>
-              Le premier marketplace algérien de services à domicile.
-              Des prestataires vérifiés et notés, près de chez vous.
-              Ménage, plomberie, cours, santé : trouvez le bon pro en un clic.
+Un besoin ? Zyvo vous met en relation avec des prestataires vérifiés dans toute l'Algérie.
+Des professionnels compétents, près de chez vous.
+Réservez en un clic.
             </p>
 
             <div className={`flex flex-wrap gap-4 mt-10 ${visible.hero ? 'animate-fade-in-up animate-delay-300' : 'opacity-0'}`}>

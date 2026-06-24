@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Home, Search as SearchIcon, Calendar, Heart, User, ArrowRight, Zap, Sparkles } from 'lucide-react'
+import { Search, Home, Search as SearchIcon, Calendar, Heart, User, ArrowRight, Info, MapPin, BookOpen, MessageCircle, Sparkles, HelpCircle } from 'lucide-react'
 
 const commands = [
   { label: 'Accueil', icon: Home, to: '/' },
@@ -9,6 +9,11 @@ const commands = [
   { label: 'Mes favoris', icon: Heart, to: '/favorites' },
   { label: 'Mon profil', icon: User, to: '/profile' },
   { label: 'Connexion / Inscription', icon: Sparkles, to: '/auth' },
+  { label: 'À propos de Zyvo', icon: Info, to: '/about' },
+  { label: 'Comment ça marche', icon: HelpCircle, to: '/how-it-works' },
+  { label: 'Villes couvertes', icon: MapPin, to: '/cities' },
+  { label: 'Blog & Conseils', icon: BookOpen, to: '/blog' },
+  { label: 'Contact & Support', icon: MessageCircle, to: '/contact' },
 ]
 
 export default function CommandPalette() {

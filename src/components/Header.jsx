@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
-import { MapPin, Home, Search, Calendar, Heart, User, Sparkles } from 'lucide-react'
+import { Home, Search, Calendar, Heart, User, Sparkles } from 'lucide-react'
 import { useAuth } from '../context/auth'
 
 const navLinks = [
@@ -51,10 +51,6 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-zyvo-muted">
-              <MapPin className="w-3.5 h-3.5 text-zyvo-gold" />
-              Alger
-            </div>
             {user ? (
               <Link
                 to="/profile"

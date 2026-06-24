@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Footer() {
   const footerLinks = [
     {
@@ -14,10 +16,11 @@ export default function Footer() {
     {
       title: 'Zyvo',
       links: [
-        { label: 'À propos', to: '#' },
-        { label: 'Blog', to: '#' },
-        { label: 'Carrières', to: '#' },
-        { label: 'Support', to: '#' },
+        { label: 'À propos', to: '/about' },
+        { label: 'Comment ça marche', to: '/how-it-works' },
+        { label: 'Blog', to: '/blog' },
+        { label: 'Villes couvertes', to: '/cities' },
+        { label: 'Contact & Support', to: '/contact' },
         { label: 'Devenir prestataire', to: '/auth' },
       ],
     },
@@ -65,9 +68,9 @@ export default function Footer() {
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.label}>
-                    <a href={link.to} className="text-xs text-zyvo-muted hover:text-zyvo-gold transition-colors">
+                    <Link to={link.to} className="text-xs text-zyvo-muted hover:text-zyvo-gold transition-colors">
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
