@@ -18,7 +18,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+      className="p-1.5 sm:p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
       title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
     >
       {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-zyvo-gold" />}
@@ -31,7 +31,7 @@ function NotificationBell() {
   return (
     <button
       onClick={() => setShowPanel(true)}
-      className="relative p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+      className="relative p-1.5 sm:p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
     >
       <Bell className="w-4 h-4" />
       {unreadCount > 0 && (
@@ -81,11 +81,11 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1">
             <ThemeToggle />
             <Link
               to="/messages"
-              className="hidden sm:flex p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+              className="hidden sm:flex p-1.5 sm:p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
             >
               <MessageCircle className="w-4 h-4" />
             </Link>
@@ -98,20 +98,12 @@ export default function Header() {
                 {user.name.charAt(0)}
               </Link>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/auth"
-                  className="text-sm font-semibold text-zyvo-muted hover:text-white transition-colors px-3 py-2"
-                >
-                  {_t('nav.login')}
-                </Link>
-                <Link
-                  to="/auth"
-                  className="gradient-brand text-white text-sm font-bold px-5 py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm"
-                >
-                  {_t('nav.register')}
-                </Link>
-              </div>
+              <Link
+                to="/auth"
+                className="gradient-brand text-white text-sm font-bold px-3 sm:px-5 py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm"
+              >
+                {_t('nav.login')}
+              </Link>
             )}
           </div>
         </div>
