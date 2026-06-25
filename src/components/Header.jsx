@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
-import { Home, Search, Calendar, Heart, User, Sparkles, Moon, Sun, Bell, MessageCircle, Globe } from 'lucide-react'
+import { Home, Search, Calendar, Heart, User, Moon, Sun, Bell, MessageCircle } from 'lucide-react'
 import { useAuth } from '../context/auth'
 import { useTheme } from '../context/theme'
 import { useNotifications } from '../context/notifications'
@@ -22,19 +22,6 @@ function ThemeToggle() {
       title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
     >
       {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-zyvo-gold" />}
-    </button>
-  )
-}
-
-function LangToggle() {
-  const { lang, switchLang } = useI18n()
-  return (
-    <button
-      onClick={() => switchLang(lang === 'fr' ? 'ar' : 'fr')}
-      className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
-    >
-      <Globe className="w-3.5 h-3.5" />
-      {lang === 'fr' ? 'AR' : 'FR'}
     </button>
   )
 }
@@ -101,10 +88,9 @@ export default function Header() {
 
           <div className="flex items-center gap-1">
             <ThemeToggle />
-            <LangToggle />
             <Link
               to="/messages"
-              className="p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+              className="hidden sm:flex p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
             >
               <MessageCircle className="w-4 h-4" />
             </Link>
