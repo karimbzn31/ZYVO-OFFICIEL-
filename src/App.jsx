@@ -87,7 +87,7 @@ export default function App() {
           <NotificationPanel />
           <ScrollToTop />
           <Header />
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8 relative">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 sm:pb-8 relative">
             <PageTransition>
               <Suspense fallback={<LoadingScreen />}>
                 <Routes>
