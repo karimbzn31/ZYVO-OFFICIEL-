@@ -1,21 +1,27 @@
 {
-  "name": "Zyvo - Services de confiance",
+  "name": "Zyvo — Le bon pro, près de chez vous",
   "short_name": "Zyvo",
-  "description": "Trouvez des prestataires de services vérifiés en Algérie",
+  "description": "Trouvez des prestataires vérifiés en Algérie. Plomberie, ménage, cours, coiffure et plus. Réservez en un clic.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F8FAFC",
-  "theme_color": "#2563EB",
+  "background_color": "#05080F",
+  "theme_color": "#05080F",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["lifestyle", "utilities"],
+  "lang": "fr-FR",
+  "dir": "ltr"
 }

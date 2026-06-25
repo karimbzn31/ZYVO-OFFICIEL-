@@ -1,26 +1,37 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, lazy, Suspense } from 'react'
+import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './context/auth'
 import { BookingProvider } from './context/booking'
 import { ToastProvider } from './context/toast'
+import { FavoritesProvider } from './context/favorites'
+import { ThemeProvider } from './context/theme'
+import { NotificationProvider } from './context/notifications'
+import { I18nProvider } from './i18n'
 import Header from './components/Header'
 import BottomNav from './components/BottomNav'
 import Footer from './components/Footer'
-import Home from './pages/Home'
-import SearchPage from './pages/Search'
-import Bookings from './pages/Bookings'
-import Favorites from './pages/Favorites'
-import Profile from './pages/Profile'
-import Auth from './pages/Auth'
-import ProviderDetail from './pages/ProviderDetail'
-import ProviderDashboard from './pages/ProviderDashboard'
 import CommandPalette from './components/CommandPalette'
-import About from './pages/About'
-import HowItWorks from './pages/HowItWorks'
-import Cities from './pages/Cities'
-import Contact from './pages/Contact'
-import Blog from './pages/Blog'
-import CategoryPage from './pages/CategoryPage'
+import NotificationPanel from './components/NotificationPanel'
+import LoadingScreen from './components/LoadingScreen'
+import SEO from './components/SEO'
+
+const Home = lazy(() => import('./pages/Home'))
+const SearchPage = lazy(() => import('./pages/Search'))
+const Bookings = lazy(() => import('./pages/Bookings'))
+const Favorites = lazy(() => import('./pages/Favorites'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Auth = lazy(() => import('./pages/Auth'))
+const ProviderDetail = lazy(() => import('./pages/ProviderDetail'))
+const ProviderDashboard = lazy(() => import('./pages/ProviderDashboard'))
+const About = lazy(() => import('./pages/About'))
+const HowItWorks = lazy(() => import('./pages/HowItWorks'))
+const Cities = lazy(() => import('./pages/Cities'))
+const Contact = lazy(() => import('./pages/Contact'))
+const Blog = lazy(() => import('./pages/Blog'))
+const CategoryPage = lazy(() => import('./pages/CategoryPage'))
+const AdminDashboard = lazy(() => import('./pages/Admin'))
+const Messages = lazy(() => import('./pages/Messages'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -58,35 +69,46 @@ function NoiseOverlay() {
 
 export default function App() {
   return (
+    <HelmetProvider>
     <AuthProvider>
+      <ThemeProvider>
+      <I18nProvider>
+      <FavoritesProvider>
+      <NotificationProvider>
       <BookingProvider>
       <ToastProvider>
+        <SEO />
         <div className="min-h-screen bg-zyvo-dark font-sans text-white">
           <div className="mesh-bg">
             <div className="mesh-dot" />
           </div>
           <NoiseOverlay />
           <CommandPalette />
+          <NotificationPanel />
           <ScrollToTop />
           <Header />
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8 relative">
             <PageTransition>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/bookings" element={<Bookings />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/provider/:id" element={<ProviderDetail />} />
-                <Route path="/provider/dashboard" element={<ProviderDashboard />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/how-it-works" element={<HowItWorks />} />
-                <Route path="/cities" element={<Cities />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/category/:slug" element={<CategoryPage />} />
-              </Routes>
+              <Suspense fallback={<LoadingScreen />}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/search" element={<SearchPage />} />
+                  <Route path="/bookings" element={<Bookings />} />
+                  <Route path="/favorites" element={<Favorites />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/provider/:id" element={<ProviderDetail />} />
+                  <Route path="/provider/dashboard" element={<ProviderDashboard />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/how-it-works" element={<HowItWorks />} />
+                  <Route path="/cities" element={<Cities />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/category/:slug" element={<CategoryPage />} />
+                </Routes>
+              </Suspense>
             </PageTransition>
           </main>
           <Footer />
@@ -94,6 +116,11 @@ export default function App() {
         </div>
       </ToastProvider>
       </BookingProvider>
+      </NotificationProvider>
+      </FavoritesProvider>
+      </I18nProvider>
+      </ThemeProvider>
     </AuthProvider>
+    </HelmetProvider>
   )
 }

@@ -25,6 +25,15 @@ html {
   scroll-behavior: smooth;
 }
 
+[data-theme="light"] {
+  --color-zyvo-dark: #F8FAFC;
+  --color-zyvo-deeper: #F1F5F9;
+  --color-zyvo-surface: #E2E8F0;
+  --color-zyvo-card: #FFFFFF;
+  --color-zyvo-border: rgba(0, 0, 0, 0.08);
+  --color-zyvo-muted: #64748B;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--color-zyvo-dark);
@@ -32,6 +41,40 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="light"] body,
+[data-theme="light"] .text-white {
+  color: #0F172A;
+}
+
+[data-theme="light"] .text-zyvo-muted {
+  color: #64748B;
+}
+
+[data-theme="light"] .glass-premium {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .glass-premium-light {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* RTL SUPPORT */
+[dir="rtl"] .ml-auto { margin-left: 0; margin-right: auto; }
+[dir="rtl"] .mr-auto { margin-right: 0; margin-left: auto; }
+[dir="rtl"] .text-left { text-align: right; }
+[dir="rtl"] .text-right { text-align: left; }
+[dir="rtl"] .space-x-reverse > * + * { margin-left: 0; margin-right: calc(0.75rem * var(--tw-space-x-reverse)); }
+[dir="rtl"] .rotate-180 { transform: rotate(-180deg); }
+
+/* ARABIC FONT */
+.lang-ar body,
+.lang-ar * {
+  font-family: 'Tajawal', 'Plus Jakarta Sans', sans-serif;
 }
 
 

@@ -1,17 +1,64 @@
 import { Link, NavLink } from 'react-router-dom'
-import { Home, Search, Calendar, Heart, User, Sparkles } from 'lucide-react'
+import { Home, Search, Calendar, Heart, User, Sparkles, Moon, Sun, Bell, MessageCircle, Globe } from 'lucide-react'
 import { useAuth } from '../context/auth'
+import { useTheme } from '../context/theme'
+import { useNotifications } from '../context/notifications'
+import { useI18n } from '../i18n'
 
 const navLinks = [
-  { to: '/', icon: Home, label: 'Accueil' },
-  { to: '/search', icon: Search, label: 'Recherche' },
-  { to: '/bookings', icon: Calendar, label: 'Réservations' },
-  { to: '/favorites', icon: Heart, label: 'Favoris' },
-  { to: '/profile', icon: User, label: 'Profil' },
+  { to: '/', icon: Home, label: 'nav.home' },
+  { to: '/search', icon: Search, label: 'nav.search' },
+  { to: '/bookings', icon: Calendar, label: 'nav.bookings' },
+  { to: '/favorites', icon: Heart, label: 'nav.favorites' },
+  { to: '/profile', icon: User, label: 'nav.profile' },
 ]
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+      title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+    >
+      {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-zyvo-gold" />}
+    </button>
+  )
+}
+
+function LangToggle() {
+  const { lang, switchLang } = useI18n()
+  return (
+    <button
+      onClick={() => switchLang(lang === 'fr' ? 'ar' : 'fr')}
+      className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
+    >
+      <Globe className="w-3.5 h-3.5" />
+      {lang === 'fr' ? 'AR' : 'FR'}
+    </button>
+  )
+}
+
+function NotificationBell() {
+  const { unreadCount, setShowPanel } = useNotifications()
+  return (
+    <button
+      onClick={() => setShowPanel(true)}
+      className="relative p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+    >
+      <Bell className="w-4 h-4" />
+      {unreadCount > 0 && (
+        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-zyvo-gold text-[9px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg">
+          {unreadCount > 9 ? '9+' : unreadCount}
+        </span>
+      )}
+    </button>
+  )
+}
 
 export default function Header() {
   const { user } = useAuth()
+  const { _t } = useI18n()
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-premium">
@@ -26,7 +73,9 @@ export default function Header() {
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-extrabold gradient-text-brand leading-tight">Zyvo</span>
-              <span className="text-[8px] font-semibold text-zyvo-gold tracking-widest uppercase leading-tight">Le bon pro, près de chez vous</span>
+              <span className="text-[8px] font-semibold text-zyvo-gold tracking-widest uppercase leading-tight">
+                {_t('hero.badge')}
+              </span>
             </div>
           </Link>
 
@@ -45,12 +94,21 @@ export default function Header() {
                 }
               >
                 <Icon className="w-4 h-4" strokeWidth={1.5} />
-                {label}
+                {_t(label)}
               </NavLink>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <LangToggle />
+            <Link
+              to="/messages"
+              className="p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </Link>
+            <NotificationBell />
             {user ? (
               <Link
                 to="/profile"
@@ -64,13 +122,13 @@ export default function Header() {
                   to="/auth"
                   className="text-sm font-semibold text-zyvo-muted hover:text-white transition-colors px-3 py-2"
                 >
-                  Connexion
+                  {_t('nav.login')}
                 </Link>
                 <Link
                   to="/auth"
                   className="gradient-brand text-white text-sm font-bold px-5 py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm"
                 >
-                  Inscription
+                  {_t('nav.register')}
                 </Link>
               </div>
             )}

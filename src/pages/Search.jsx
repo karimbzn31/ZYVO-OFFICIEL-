@@ -75,15 +75,20 @@ export default function SearchPage() {
       ].slice(0, 5)
     : []
 
+  const [selectedCity, setSelectedCity] = useState('')
+  const allCities = [...new Set(providers.map(p => p.city))].sort()
+
   const filtered = providers.filter(p => {
     const q = query.toLowerCase()
     if (q) {
       const matchName = p.name.toLowerCase().includes(q)
       const matchService = p.service.toLowerCase().includes(q)
       const matchCat = p.category?.toLowerCase().includes(q)
-      if (!matchName && !matchService && !matchCat) return false
+      const matchCity = p.city?.toLowerCase().includes(q)
+      if (!matchName && !matchService && !matchCat && !matchCity) return false
     }
     if (activeCategory && p.category !== activeCategory) return false
+    if (selectedCity && p.city !== selectedCity) return false
     const price = p.priceValue || parseInt(p.price.replace(/\D/g, '')) || 0
     if (price < priceRange[0] || price > priceRange[1]) return false
     if (p.rating < minRating) return false
@@ -114,6 +119,7 @@ export default function SearchPage() {
     setActiveCategory(null)
     setPriceRange([0, 5000])
     setMinRating(0)
+    setSelectedCity('')
     inputRef.current?.focus()
   }
 
@@ -122,7 +128,7 @@ export default function SearchPage() {
     localStorage.removeItem(RECENT_KEY)
   }
 
-  const activeFiltersCount = (activeCategory ? 1 : 0) + (priceRange[1] < 5000 ? 1 : 0) + (minRating > 0 ? 1 : 0)
+  const activeFiltersCount = (activeCategory ? 1 : 0) + (priceRange[1] < 5000 ? 1 : 0) + (minRating > 0 ? 1 : 0) + (selectedCity ? 1 : 0)
 
   return (
     <div className="py-8">
@@ -241,7 +247,7 @@ export default function SearchPage() {
       )}
 
       {/* ACTIVE FILTERS CHIPS */}
-      {(activeCategory || priceRange[1] < 5000 || minRating > 0) && (
+      {(activeCategory || priceRange[1] < 5000 || minRating > 0 || selectedCity) && (
         <div className="flex flex-wrap gap-2 mt-4">
           {activeCategory && (
             <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zyvo-gold/10 text-zyvo-gold text-xs font-semibold border border-zyvo-gold/20">
@@ -259,6 +265,12 @@ export default function SearchPage() {
             <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 text-xs font-semibold">
               <Star className="w-3 h-3 fill-amber-400" /> {minRating}+
               <button onClick={() => setMinRating(0)}><X className="w-3 h-3 ml-1" /></button>
+            </span>
+          )}
+          {selectedCity && (
+            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold">
+              <MapPin className="w-3 h-3" /> {selectedCity}
+              <button onClick={() => setSelectedCity('')}><X className="w-3 h-3 ml-1" /></button>
             </span>
           )}
           <button onClick={clearSearch} className="px-3 py-1.5 rounded-lg text-xs font-semibold text-zyvo-muted hover:text-white transition-all flex items-center gap-1">
@@ -384,17 +396,30 @@ export default function SearchPage() {
               <MapPin className="w-3 h-3 inline mr-1" /> Ville
             </label>
             <div className="flex flex-wrap gap-2">
-              {['Alger', 'Oran', 'Constantine', 'Blida'].map(city => (
-                <span key={city} className="px-4 py-2 rounded-xl bg-white/5 text-zyvo-muted text-xs font-semibold">
+              <button
+                onClick={() => setSelectedCity('')}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                  !selectedCity ? 'bg-zyvo-gold/10 border-zyvo-gold/30 text-white' : 'bg-white/5 border-transparent text-zyvo-muted hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Toutes
+              </button>
+              {allCities.map(city => (
+                <button
+                  key={city}
+                  onClick={() => setSelectedCity(selectedCity === city ? '' : city)}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                    selectedCity === city ? 'bg-zyvo-gold/10 border-zyvo-gold/30 text-white' : 'bg-white/5 border-transparent text-zyvo-muted hover:text-white hover:bg-white/10'
+                  }`}
+                >
                   {city}
-                </span>
+                </button>
               ))}
             </div>
-            <p className="text-[10px] text-zyvo-muted mt-2">Plus de villes bientôt disponibles</p>
           </div>
 
           <button
-            onClick={() => { setPriceRange([0, 5000]); setMinRating(0) }}
+            onClick={() => { setPriceRange([0, 5000]); setMinRating(0); setSelectedCity('') }}
             className="text-xs text-zyvo-gold font-semibold hover:underline flex items-center gap-1"
           >
             <RotateCcw className="w-3 h-3" /> Réinitialiser les filtres
