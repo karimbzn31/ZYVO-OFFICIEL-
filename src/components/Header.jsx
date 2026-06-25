@@ -58,12 +58,7 @@ export default function Header() {
               </div>
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-zyvo-gold rounded-full animate-pulse-soft" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-extrabold gradient-text-brand leading-tight">Zyvo</span>
-              <span className="text-[8px] font-semibold text-zyvo-gold tracking-widest uppercase leading-tight">
-                {_t('hero.badge')}
-              </span>
-            </div>
+            <span className="text-lg font-extrabold gradient-text-brand leading-tight">Zyvo</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
