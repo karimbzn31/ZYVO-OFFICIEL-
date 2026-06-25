@@ -81,7 +81,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-1">
             <ThemeToggle />
             <Link
               to="/messages"
@@ -98,12 +98,20 @@ export default function Header() {
                 {user.name.charAt(0)}
               </Link>
             ) : (
-              <Link
-                to="/auth"
-                className="gradient-brand text-white text-xs sm:text-sm font-bold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm"
-              >
-                {_t('nav.login')}
-              </Link>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Link
+                  to="/auth"
+                  className="text-xs sm:text-sm font-semibold text-zyvo-muted hover:text-white transition-colors px-1.5 sm:px-3 py-1.5 sm:py-2"
+                >
+                  {_t('nav.login')}
+                </Link>
+                <Link
+                  to="/auth"
+                  className="gradient-brand text-white text-xs sm:text-sm font-bold px-2.5 sm:px-5 py-1.5 sm:py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm"
+                >
+                  {_t('nav.register')}
+                </Link>
+              </div>
             )}
           </div>
         </div>
