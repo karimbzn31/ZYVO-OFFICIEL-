@@ -58,7 +58,7 @@ export default function Header() {
               </div>
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-zyvo-gold rounded-full animate-pulse-soft" />
             </div>
-            <span className="hidden sm:inline text-base sm:text-lg font-extrabold gradient-text-brand leading-tight">Zyvo</span>
+            <span className="text-sm sm:text-lg font-extrabold gradient-text-brand leading-tight">Zyvo</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
