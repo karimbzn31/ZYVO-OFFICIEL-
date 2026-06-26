@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zyvo-officiel.vercel.app/sitemap.xml

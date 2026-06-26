@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Mail, MapPin, MessageCircle } from 'lucide-react'
 
 export default function Footer() {
   const footerLinks = [
@@ -18,18 +19,18 @@ export default function Footer() {
       links: [
         { label: 'À propos', to: '/about' },
         { label: 'Comment ça marche', to: '/how-it-works' },
-        { label: 'Blog', to: '/blog' },
-        { label: 'Villes couvertes', to: '/cities' },
+        { label: 'FAQ', to: '/faq' },
+        { label: 'Avis clients', to: '/reviews' },
+        { label: 'Devenir prestataire', to: '/become-provider' },
         { label: 'Contact & Support', to: '/contact' },
-        { label: 'Devenir prestataire', to: '/auth' },
       ],
     },
     {
       title: 'Légal',
       links: [
-        { label: "Conditions d'utilisation", to: '#' },
-        { label: 'Politique de confidentialité', to: '#' },
-        { label: 'Protection des données', to: '#' },
+        { label: "Conditions d'utilisation", to: '/legal' },
+        { label: 'Politique de confidentialité', to: '/privacy' },
+        { label: 'Protection des données', to: '/privacy' },
       ],
     },
   ]
@@ -54,14 +55,32 @@ export default function Footer() {
             <p className="text-xs text-zyvo-muted leading-relaxed">
               Le premier marketplace de services de confiance en Algérie. Des prestataires vérifiés, notés et disponibles près de chez vous.
             </p>
+
+            {/* SOCIAL */}
             <div className="flex items-center gap-3 mt-4">
-              {['Facebook', 'Instagram', 'X'].map((s) => (
-                <a key={s} href="#" className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 hover:text-zyvo-gold transition-all">
-                  <span className="text-xs font-bold text-zyvo-muted">{s.charAt(0)}</span>
-                </a>
-              ))}
+              <a href="https://facebook.com/zyvo" target="_blank" rel="noopener noreferrer"
+                className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-500/20 hover:text-blue-400 transition-all text-xs font-bold text-zyvo-muted hover:text-blue-400">
+                f
+              </a>
+              <a href="https://instagram.com/zyvo" target="_blank" rel="noopener noreferrer"
+                className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center hover:bg-pink-500/20 hover:text-pink-400 transition-all text-xs font-bold text-zyvo-muted hover:text-pink-400">
+                ig
+              </a>
+              <a href="https://linkedin.com/company/zyvo" target="_blank" rel="noopener noreferrer"
+                className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center hover:bg-blue-500/20 hover:text-blue-400 transition-all">
+                <MessageCircle className="w-4 h-4 text-zyvo-muted" strokeWidth={1.5} />
+              </a>
+              <a href="mailto:contact@zyvo.dz" className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center hover:bg-emerald-500/20 hover:text-emerald-400 transition-all">
+                <Mail className="w-4 h-4 text-zyvo-muted" strokeWidth={1.5} />
+              </a>
             </div>
+
+            {/* EMAIL */}
+            <a href="mailto:contact@zyvo.dz" className="inline-flex items-center gap-1.5 text-xs text-zyvo-muted hover:text-zyvo-gold transition-colors mt-3">
+              <Mail className="w-3 h-3" /> contact@zyvo.dz
+            </a>
           </div>
+
           {footerLinks.map((section) => (
             <div key={section.title}>
               <h4 className="font-bold text-sm mb-4 text-white">{section.title}</h4>
@@ -77,14 +96,20 @@ export default function Footer() {
             </div>
           ))}
         </div>
+
         <div className="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-zyvo-muted">
-            &copy; 2026 Zyvo Algeria. Tous droits réservés.
+            &copy; 2025 Zyvo Algeria. Tous droits réservés.
           </p>
           <div className="flex items-center gap-4 text-xs text-zyvo-muted">
-            <span className="flex items-center gap-1">🇩🇿 Alger, Algérie</span>
-            <span className="hidden sm:inline">•</span>
-            <a href="#" className="hover:text-zyvo-gold transition-colors hidden sm:inline">Support WhatsApp</a>
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" /> Alger, Algérie
+            </span>
+            <span className="hidden sm:inline">·</span>
+            <a href="https://wa.me/213560123456" target="_blank" rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1 text-zyvo-gold hover:underline">
+              <MessageCircle className="w-3 h-3" /> Support WhatsApp
+            </a>
           </div>
         </div>
       </div>
