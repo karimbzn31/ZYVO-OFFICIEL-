@@ -43,16 +43,16 @@ function StepIndicator({ current }) {
         const isActive = current === stepNum
         const isDone = current > stepNum
         return (
-          <div key={s.num} className="flex items-center gap-2">
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+          <div key={s.num} className="flex items-center gap-1 sm:gap-2">
+            <div className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all ${
               isDone ? 'bg-emerald-500/20 text-emerald-400' :
               isActive ? 'gradient-brand text-white shadow-lg' :
               'bg-white/5 text-zyvo-muted'
             }`}>
-              {isDone ? <CheckCircle className="w-3 h-3" /> : <span>{s.num}</span>}
+              {isDone ? <CheckCircle className="w-2.5 sm:w-3 h-2.5 sm:h-3" /> : <span>{s.num}</span>}
             </div>
             {i < steps.length - 1 && (
-              <div className={`h-0.5 w-6 sm:w-10 rounded-full transition-all ${
+              <div className={`h-0.5 w-3 sm:w-6 lg:w-10 rounded-full transition-all ${
                 isDone ? 'bg-emerald-500/40' : 'bg-white/5'
               }`} />
             )}

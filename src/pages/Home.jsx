@@ -219,11 +219,11 @@ export default function Home() {
       </RippleButton>
 
       {/* PARALLAX ORBS */}
-      <div className="orb w-[700px] h-[700px] bg-blue-500/10 top-[-250px] right-[-200px]"
+      <div className="orb w-[400px] sm:w-[700px] h-[400px] sm:h-[700px] bg-blue-500/10 top-[-150px] sm:top-[-250px] right-[-150px] sm:right-[-200px]"
         style={{ transform: `translate(${(mousePos.x - 0.5) * -20}px, ${(mousePos.y - 0.5) * -20}px)` }} />
-      <div className="orb w-[500px] h-[500px] bg-purple-500/8 bottom-[300px] left-[-200px]"
+      <div className="orb w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-purple-500/8 bottom-[200px] sm:bottom-[300px] left-[-120px] sm:left-[-200px]"
         style={{ transform: `translate(${(mousePos.x - 0.5) * 15}px, ${(mousePos.y - 0.5) * 15}px)` }} />
-      <div className="orb w-[400px] h-[400px] bg-amber-500/8 top-[40%] right-[-100px]"
+      <div className="orb w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-amber-500/8 top-[40%] right-[-80px] sm:right-[-100px]"
         style={{ transform: `translate(${(mousePos.x - 0.5) * -10}px, ${(mousePos.y - 0.5) * -10}px)` }} />
 
       {/* ===== HERO ===== */}
@@ -237,7 +237,7 @@ export default function Home() {
                 Des pros vérifiés en Algérie
               </div>
 
-              <h1 className={`text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[0.92] tracking-tight ${visible.hero ? 'animate-fade-in-up animate-delay-100' : 'opacity-0'}`}>
+              <h1 className={`text-[2.5rem] sm:text-6xl lg:text-7xl font-extrabold leading-[0.92] tracking-tight ${visible.hero ? 'animate-fade-in-up animate-delay-100' : 'opacity-0'}`}>
                 Le <span className="hero-shimmer">bon pro</span>
                 <br />
                 <span className="gradient-text-brand">près de chez vous</span>
@@ -319,7 +319,7 @@ export default function Home() {
                         required
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-zyvo-gold/40 transition-colors"
                       />
-                      <div className="relative">
+    <div className="relative overflow-x-hidden">
                         <select
                           value={wlType}
                           onChange={e => setWlType(e.target.value)}
