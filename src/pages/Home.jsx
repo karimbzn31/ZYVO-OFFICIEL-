@@ -7,8 +7,8 @@ import {
   CheckCircle, MessageCircle, ChevronDown, Truck, User, Heart,
   Phone, Award, Users, Clock, Mail, Smartphone,
   GraduationCap, Scissors, Package, Store,
-  UserCheck, BadgeCheck, ThumbsUp, Layers,
-  Play, Download, Globe
+   UserCheck, BadgeCheck, ThumbsUp, Layers,
+   Play, Download, Globe, Calendar
 } from 'lucide-react'
 
 const services = [

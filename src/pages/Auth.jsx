@@ -4,7 +4,7 @@ import {
   Phone, User, ArrowRight, ShieldCheck, Sparkles, ChevronLeft, Check, Briefcase,
   MapPin, Clock, Star, Award, FileText, GraduationCap, Wrench, Home as HomeIcon,
   Monitor, Zap, Heart, ChevronRight, Mail, Building, Globe, CheckCircle, AlertCircle,
-  Upload, Camera, Calendar, DollarSign, Info, X, ChevronDown
+  Upload, Camera, DollarSign, Info, X, ChevronDown
 } from 'lucide-react'
 import { useAuth } from '../context/auth'
 
