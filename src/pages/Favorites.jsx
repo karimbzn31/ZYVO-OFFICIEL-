@@ -2,6 +2,7 @@ import { Heart, Search, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import ProviderCard from '../components/ProviderCard'
 import { useFavorites } from '../context/favorites'
+import EmptyState from '../components/EmptyState'
 
 export default function Favorites() {
   const { favorites, removeFavorite } = useFavorites()
@@ -16,21 +17,13 @@ export default function Favorites() {
       </div>
 
       {favorites.length === 0 ? (
-        <div className="text-center py-20">
-          <div className="w-20 h-20 rounded-2xl glass-premium flex items-center justify-center mx-auto mb-6">
-            <Heart className="w-10 h-10 text-zyvo-muted/40" strokeWidth={1} />
-          </div>
-          <h3 className="text-lg font-bold text-white">Aucun favori</h3>
-          <p className="text-sm text-zyvo-muted mt-2 max-w-xs mx-auto">
-            Ajoutez des prestataires à vos favoris en cliquant sur le cœur. Retrouvez-les ici rapidement.
-          </p>
-          <Link
-            to="/search"
-            className="inline-flex items-center gap-2 gradient-brand text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition-all duration-300 mt-6 glow-worm"
-          >
-            <Search className="w-4 h-4" /> Découvrir des pros
-          </Link>
-        </div>
+        <EmptyState
+          icon="heart"
+          title="Aucun favori"
+          description="Ajoutez des prestataires à vos favoris en cliquant sur le cœur. Retrouvez-les ici rapidement."
+          actionLabel="Découvrir des pros"
+          actionTo="/search"
+        />
       ) : (
         <div className="mt-6 space-y-3">
           {favorites.map((p) => (

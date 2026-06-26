@@ -392,6 +392,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== POURQUOI ZYVO ===== */}
+      <section data-section="pourquoi" className="py-16">
+        <div className="text-center mb-10">
+          <h2 className={`text-3xl sm:text-4xl font-extrabold ${visible.pourquoi ? 'animate-fade-in-up' : 'opacity-0'}`}>
+            Pourquoi <span className="gradient-text-brand">Zyvo</span> ?
+          </h2>
+          <p className={`text-zyvo-muted mt-2 ${visible.pourquoi ? 'animate-fade-in-up animate-delay-100' : 'opacity-0'}`}>
+            La confiance est au cœur de notre plateforme
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-6">
+          {[
+            { icon: ShieldCheck, title: '100% Vérifié', desc: 'Chaque prestataire est vérifié manuellement par notre équipe. Identité, compétences et avis — rien n\'est laissé au hasard.', gradient: 'from-emerald-500 to-teal-400', stat: '500+', statLabel: 'Pros vérifiés' },
+            { icon: Star, title: 'Avis Authentiques', desc: 'Seuls les clients ayant réellement réservé peuvent laisser un avis. Pas de faux avis, pas de notes truquées.', gradient: 'from-amber-500 to-orange-400', stat: '4.7/5', statLabel: 'Note moyenne' },
+            { icon: MessageCircle, title: 'Support 7j/7', desc: 'Notre équipe est disponible tous les jours par WhatsApp. Un problème ? On répond en moins de 30 minutes.', gradient: 'from-blue-500 to-cyan-400', stat: '< 30 min', statLabel: 'Temps de réponse' },
+          ].map((item) => (
+            <div key={item.title} className={`glass-premium rounded-3xl p-6 card-hover relative overflow-hidden ${visible.pourquoi ? 'animate-fade-in-up' : 'opacity-0'}`}>
+              <div className={`absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br ${item.gradient} rounded-full blur-3xl opacity-10`} />
+              <div className="relative z-10">
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-4 shadow-lg`}>
+                  <item.icon className="w-7 h-7 text-white" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-extrabold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-zyvo-muted leading-relaxed mb-4">{item.desc}</p>
+                <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-2xl font-extrabold gradient-text">{item.stat}</span>
+                  <span className="text-xs text-zyvo-muted">{item.statLabel}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ===== COMMENT ÇA MARCHE ===== */}
       <section data-section="how" className="py-16">
         <div className="text-center mb-10">

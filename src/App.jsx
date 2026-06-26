@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect, useRef, lazy, Suspense } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './context/auth'
 import { BookingProvider } from './context/booking'
@@ -47,26 +48,19 @@ function ScrollToTop() {
 }
 
 function PageTransition({ children }) {
-  const ref = useRef(null)
   const { pathname } = useLocation()
-
-  useEffect(() => {
-    const el = ref.current
-    if (el) {
-      el.style.opacity = '0'
-      el.style.transform = 'translateY(8px)'
-      requestAnimationFrame(() => {
-        el.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out'
-        el.style.opacity = '1'
-        el.style.transform = 'translateY(0)'
-      })
-    }
-  }, [pathname])
-
   return (
-    <div ref={ref} style={{ opacity: 1, transform: 'translateY(0)' }}>
-      {children}
-    </div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
   )
 }
 

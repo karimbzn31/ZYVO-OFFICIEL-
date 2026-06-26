@@ -6,6 +6,9 @@ import { useAuth } from '../context/auth'
 import { useBookings } from '../context/booking'
 import { useToast } from '../context/toast'
 import { useFavorites } from '../context/favorites'
+import Lightbox from '../components/Lightbox'
+import RatingDetailed from '../components/RatingDetailed'
+import BottomSheet from '../components/BottomSheet'
 
 const serviceGradients = {
   'Plombier': 'from-blue-500 to-cyan-400',
@@ -63,6 +66,11 @@ export default function ProviderDetail() {
   const [bookingStep, setBookingStep] = useState('idle')
   const [activeTab, setActiveTab] = useState('about')
   const [showGallery, setShowGallery] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [detailedRatings, setDetailedRatings] = useState({
+    qualite: 0, ponctualite: 0, prix: 0, communication: 0, professionnalisme: 0,
+  })
 
   // review form
   const [showReviewForm, setShowReviewForm] = useState(false)
@@ -459,24 +467,12 @@ export default function ProviderDetail() {
           {showReviewForm && (
             <div className="glass-premium-light rounded-xl p-4 mb-6 space-y-4">
               <div>
-                <label className="text-xs font-bold text-zyvo-muted block mb-2">Votre note</label>
-                <div className="flex gap-1">
-                  {[1,2,3,4,5].map(star => (
-                    <button
-                      key={star}
-                      onClick={() => setReviewRating(star)}
-                      onMouseEnter={() => setReviewHover(star)}
-                      onMouseLeave={() => setReviewHover(0)}
-                      className="p-1 transition-transform hover:scale-110"
-                    >
-                      <Star className={`w-7 h-7 transition-all ${
-                        star <= (reviewHover || reviewRating)
-                          ? 'fill-zyvo-gold text-zyvo-gold'
-                          : 'text-zyvo-muted/30'
-                      }`} />
-                    </button>
-                  ))}
-                </div>
+                <label className="text-xs font-bold text-zyvo-muted block mb-3">Note détaillée</label>
+                <RatingDetailed
+                  ratings={detailedRatings}
+                  onRate={(key, val) => setDetailedRatings(prev => ({ ...prev, [key]: val }))}
+                  size="sm"
+                />
               </div>
               <div>
                 <label className="text-xs font-bold text-zyvo-muted block mb-2">Votre commentaire</label>
@@ -496,7 +492,7 @@ export default function ProviderDetail() {
                   <ThumbsUp className="w-4 h-4 inline mr-1" /> Publier mon avis
                 </button>
                 <button
-                  onClick={() => { setShowReviewForm(false); setReviewRating(0); setReviewText('') }}
+                  onClick={() => { setShowReviewForm(false); setReviewRating(0); setReviewText(''); setDetailedRatings({ qualite: 0, ponctualite: 0, prix: 0, communication: 0, professionnalisme: 0 }) }}
                   className="px-4 py-2.5 rounded-xl text-sm font-semibold text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
                 >
                   Annuler
@@ -534,41 +530,37 @@ export default function ProviderDetail() {
       {activeTab === 'photos' && (
         <div className="glass-premium rounded-2xl p-6 mt-6">
           <h3 className="font-bold text-lg mb-4">Galerie photos</h3>
-          {showGallery ? (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {galleryImages.map((img, i) => (
-                <div key={i} className="rounded-xl overflow-hidden aspect-[3/2] glass-premium-light">
-                  <img
-                    src={img}
-                    alt={`Réalisation ${i + 1}`}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                    onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-zyvo-muted text-xs"><ImageIcon class="w-6 h-6" /></div>' }}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {galleryImages.slice(0, 3).map((img, i) => (
-                <div key={i} className="rounded-xl overflow-hidden aspect-[3/2] glass-premium-light">
-                  <img
-                    src={img}
-                    alt={`Réalisation ${i + 1}`}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                    onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-zyvo-muted text-xs"><ImageIcon class="w-6 h-6" /></div>' }}
-                  />
-                </div>
-              ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {galleryImages.map((img, i) => (
               <button
-                onClick={() => setShowGallery(true)}
-                className="rounded-xl aspect-[3/2] glass-premium-light flex flex-col items-center justify-center gap-1 text-zyvo-muted hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+                key={i}
+                onClick={() => { setLightboxIndex(i); setLightboxOpen(true) }}
+                className="rounded-xl overflow-hidden aspect-[3/2] glass-premium-light group relative"
               >
-                <ImageIcon className="w-6 h-6" />
-                <span className="text-xs font-bold">+{galleryImages.length - 3} photos</span>
+                <img
+                  src={img}
+                  alt={`Réalisation ${i + 1}`}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-zyvo-muted text-xs"><svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M2 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></div>' }}
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                  <ImageIcon className="w-6 h-6 text-white/0 group-hover:text-white/80 transition-all" />
+                </div>
               </button>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
+      )}
+
+      {/* LIGHTBOX */}
+      {lightboxOpen && (
+        <Lightbox
+          images={galleryImages}
+          currentIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+          onPrev={() => setLightboxIndex(i => (i - 1 + galleryImages.length) % galleryImages.length)}
+          onNext={() => setLightboxIndex(i => (i + 1) % galleryImages.length)}
+        />
       )}
 
       {/* SIMILAR PROVIDERS */}

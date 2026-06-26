@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+:root {
+  --zyvo-text-primary: #F8FAFC;
+  --zyvo-text-secondary: #94A3B8;
+  --zyvo-glass-bg: rgba(17, 24, 39, 0.6);
+  --zyvo-glass-border: rgba(255, 255, 255, 0.06);
+  --zyvo-glass-light-bg: rgba(255, 255, 255, 0.03);
+  --zyvo-glass-light-border: rgba(255, 255, 255, 0.06);
+  --zyvo-card-hover-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --zyvo-card-hover-border: rgba(59, 130, 246, 0.2);
+  --zyvo-shimmer-bg: rgba(255, 255, 255, 0.03);
+  --zyvo-shimmer-highlight: rgba(255, 255, 255, 0.08);
+}
+
 @theme {
   --color-zyvo-dark: #05080F;
   --color-zyvo-deeper: #020409;
@@ -28,39 +41,68 @@ html {
 [data-theme="light"] {
   --color-zyvo-dark: #F8FAFC;
   --color-zyvo-deeper: #F1F5F9;
-  --color-zyvo-surface: #E2E8F0;
+  --color-zyvo-surface: #FFFFFF;
   --color-zyvo-card: #FFFFFF;
   --color-zyvo-border: rgba(0, 0, 0, 0.08);
   --color-zyvo-muted: #64748B;
+  --zyvo-text-primary: #0F172A;
+  --zyvo-text-secondary: #64748B;
+  --zyvo-glass-bg: rgba(255, 255, 255, 0.8);
+  --zyvo-glass-border: rgba(0, 0, 0, 0.06);
+  --zyvo-glass-light-bg: rgba(0, 0, 0, 0.03);
+  --zyvo-glass-light-border: rgba(0, 0, 0, 0.06);
+  --zyvo-card-hover-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  --zyvo-card-hover-border: rgba(59, 130, 246, 0.3);
+  --zyvo-shimmer-bg: rgba(0, 0, 0, 0.05);
+  --zyvo-shimmer-highlight: rgba(0, 0, 0, 0.1);
 }
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--color-zyvo-dark);
-  color: #F8FAFC;
+  color: var(--zyvo-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-[data-theme="light"] body,
-[data-theme="light"] .text-white {
-  color: #0F172A;
+[data-theme="light"] body {
+  color: var(--zyvo-text-primary);
 }
 
 [data-theme="light"] .text-zyvo-muted {
   color: #64748B;
 }
 
-[data-theme="light"] .glass-premium {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(0, 0, 0, 0.06);
+.glass-premium {
+  background: var(--zyvo-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--zyvo-glass-border);
 }
 
-[data-theme="light"] .glass-premium-light {
-  background: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.06);
+.glass-premium-light {
+  background: var(--zyvo-glass-light-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--zyvo-glass-light-border);
+}
+
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: var(--zyvo-card-hover-border);
+  box-shadow: var(--zyvo-card-hover-shadow), 0 0 40px rgba(59, 130, 246, 0.05);
+}
+
+.shimmer {
+  background: linear-gradient(90deg, var(--zyvo-shimmer-bg) 25%, var(--zyvo-shimmer-highlight) 50%, var(--zyvo-shimmer-bg) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }
 
 /* RTL SUPPORT */
@@ -225,19 +267,6 @@ body {
 }
 
 /* ===== PREMIUM GLASS ===== */
-.glass-premium {
-  background: rgba(17, 24, 39, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.glass-premium-light {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
 
 /* ===== CARD WITH ANIMATED GRADIENT BORDER ===== */
 .card-border-glow {
@@ -332,15 +361,6 @@ body {
 }
 
 /* ===== CARD HOVER ===== */
-.card-hover {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.card-hover:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(59, 130, 246, 0.05);
-}
 
 /* ===== ORB ===== */
 .orb {
@@ -373,11 +393,6 @@ body {
 }
 
 /* ===== SHIMMER LOADING ===== */
-.shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
 
 /* ===== FLOATING ELEMENT ===== */
 .animate-float {
