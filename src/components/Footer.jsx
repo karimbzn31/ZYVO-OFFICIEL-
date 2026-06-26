@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Mail, MapPin, MessageCircle } from 'lucide-react'
+import Logo from './Logo'
 
 export default function Footer() {
   const footerLinks = [
@@ -40,18 +41,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="relative">
-                <div className="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center font-bold text-white text-sm shadow-lg">
-                  Z
-                </div>
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-zyvo-gold rounded-full animate-pulse-soft" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-extrabold gradient-text-brand leading-tight">Zyvo</span>
-                <span className="text-[8px] font-semibold text-zyvo-gold tracking-widest uppercase leading-tight">Le bon pro, près de chez vous</span>
-              </div>
-            </div>
+            <Logo logoSize="md" />
             <p className="text-xs text-zyvo-muted leading-relaxed">
               Le premier marketplace de services de confiance en Algérie. Des prestataires vérifiés, notés et disponibles près de chez vous.
             </p>

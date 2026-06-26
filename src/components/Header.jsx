@@ -4,6 +4,7 @@ import { useAuth } from '../context/auth'
 import { useTheme } from '../context/theme'
 import { useNotifications } from '../context/notifications'
 import { useI18n } from '../i18n'
+import Logo from './Logo'
 
 const navLinks = [
   { to: '/', icon: Home, label: 'nav.home' },
@@ -51,14 +52,8 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 glass-premium">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-1.5 sm:gap-2 group shrink-0">
-            <div className="relative">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl gradient-brand flex items-center justify-center font-bold text-white text-xs sm:text-sm shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <span className="relative z-10">Z</span>
-              </div>
-              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-zyvo-gold rounded-full animate-pulse-soft" />
-            </div>
-            <span className="text-sm sm:text-lg font-extrabold gradient-text-brand leading-tight">Zyvo</span>
+          <Link to="/" className="group">
+            <Logo />
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">

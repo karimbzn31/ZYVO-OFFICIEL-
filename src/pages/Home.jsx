@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import Logo from '../components/Logo'
 import { 
   ArrowRight, Sparkles, ShieldCheck, Star,
   Wrench, Home as HomeIcon, Monitor, Zap,
@@ -718,9 +719,8 @@ export default function Home() {
                   <div className="w-16 h-1.5 rounded-full bg-white/20" />
                 </div>
                 <div className="pt-8 px-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-6 h-6 rounded-lg gradient-brand flex items-center justify-center text-[10px] font-bold text-white">Z</div>
-                    <span className="text-xs font-bold text-white">Zyvo</span>
+                  <div className="mb-4 flex justify-center">
+                    <Logo logoSize="sm" />
                   </div>
                   <div className="space-y-2">
                     <div className="h-3 bg-white/10 rounded w-3/4" />
