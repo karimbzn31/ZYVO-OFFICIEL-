@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Home, Calendar, Heart, User, Moon, Sun, Bell, MessageCircle } from 'lucide-react'
+import { Home, Search, Calendar, Heart, User, Moon, Sun, Bell, MessageCircle } from 'lucide-react'
 import { useAuth } from '../context/auth'
 import { useTheme } from '../context/theme'
 import { useNotifications } from '../context/notifications'
@@ -10,8 +10,10 @@ import RoleModal from './RoleModal'
 
 const navLinks = [
   { to: '/', icon: Home, label: 'nav.home' },
-  { to: '/bookings', icon: Calendar, label: 'Mes réservations' },
-  { to: '/favorites', icon: Heart, label: 'Favoris' },
+  { to: '/search', icon: Search, label: 'nav.search' },
+  { to: '/bookings', icon: Calendar, label: 'nav.bookings' },
+  { to: '/favorites', icon: Heart, label: 'nav.favorites' },
+  { to: '/profile', icon: User, label: 'nav.profile' },
 ]
 
 function ThemeToggle() {
@@ -73,7 +75,7 @@ export default function Header() {
                   }
                 >
                   <Icon className="w-4 h-4" strokeWidth={1.5} />
-                  {label}
+                  {_t(label)}
                 </NavLink>
               ))}
             </nav>
