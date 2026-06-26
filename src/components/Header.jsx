@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Home, Search, Calendar, Heart, User, Moon, Sun, Bell, MessageCircle } from 'lucide-react'
 import { useAuth } from '../context/auth'
@@ -5,6 +6,7 @@ import { useTheme } from '../context/theme'
 import { useNotifications } from '../context/notifications'
 import { useI18n } from '../i18n'
 import Logo from './Logo'
+import RoleModal from './RoleModal'
 
 const navLinks = [
   { to: '/', icon: Home, label: 'nav.home' },
@@ -47,9 +49,11 @@ function NotificationBell() {
 export default function Header() {
   const { user } = useAuth()
   const { _t } = useI18n()
+  const [showRoleModal, setShowRoleModal] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-premium border-b border-white/5">
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 glass-premium border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="group shrink-0">
@@ -100,17 +104,20 @@ export default function Header() {
                   >
                     Connexion
                   </Link>
-                  <Link
-                    to="/auth"
+                  <button
+                    onClick={() => setShowRoleModal(true)}
                     className="gradient-brand text-white text-sm font-bold px-5 py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm"
                   >
                     S'inscrire
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
           </div>
         </div>
-    </header>
+      </header>
+
+      <RoleModal open={showRoleModal} onClose={() => setShowRoleModal(false)} />
+    </>
   )
 }
