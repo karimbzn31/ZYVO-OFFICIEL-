@@ -32,6 +32,13 @@ const Blog = lazy(() => import('./pages/Blog'))
 const CategoryPage = lazy(() => import('./pages/CategoryPage'))
 const AdminDashboard = lazy(() => import('./pages/Admin'))
 const Messages = lazy(() => import('./pages/Messages'))
+const FAQ = lazy(() => import('./pages/FAQ'))
+const Legal = lazy(() => import('./pages/Legal'))
+const Privacy = lazy(() => import('./pages/Privacy'))
+const Settings = lazy(() => import('./pages/Settings'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const Reviews = lazy(() => import('./pages/Reviews'))
+const BecomeProvider = lazy(() => import('./pages/BecomeProvider'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -107,6 +114,13 @@ export default function App() {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/category/:slug" element={<CategoryPage />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/legal" element={<Legal />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/reviews" element={<Reviews />} />
+                  <Route path="/become-provider" element={<BecomeProvider />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </PageTransition>
