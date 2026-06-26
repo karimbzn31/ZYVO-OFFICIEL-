@@ -41,6 +41,13 @@ const Settings = lazy(() => import('./pages/Settings'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const Reviews = lazy(() => import('./pages/Reviews'))
 const BecomeProvider = lazy(() => import('./pages/BecomeProvider'))
+const Refer = lazy(() => import('./pages/Refer'))
+const BookingDetail = lazy(() => import('./pages/BookingDetail'))
+const Support = lazy(() => import('./pages/Support'))
+const BlogPost = lazy(() => import('./pages/BlogPost'))
+const ServicePage = lazy(() => import('./pages/ServicePage'))
+const CityPage = lazy(() => import('./pages/CityPage'))
+const Voucher = lazy(() => import('./pages/Voucher'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -113,6 +120,13 @@ export default function App() {
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/reviews" element={<Reviews />} />
                   <Route path="/become-provider" element={<BecomeProvider />} />
+                  <Route path="/refer" element={<Refer />} />
+                  <Route path="/booking/:id" element={<BookingDetail />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/service/:slug" element={<ServicePage />} />
+                  <Route path="/cities/:city" element={<CityPage />} />
+                  <Route path="/voucher" element={<Voucher />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
