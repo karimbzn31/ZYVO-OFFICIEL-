@@ -15,6 +15,7 @@ import Footer from './components/Footer'
 import CommandPalette from './components/CommandPalette'
 import NotificationPanel from './components/NotificationPanel'
 import LoadingScreen from './components/LoadingScreen'
+import ErrorBoundary from './components/ErrorBoundary'
 import SEO from './components/SEO'
 
 const Home = lazy(() => import('./pages/Home'))
@@ -67,6 +68,7 @@ function NoiseOverlay() {
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <HelmetProvider>
     <AuthProvider>
       <ThemeProvider>
@@ -127,5 +129,6 @@ export default function App() {
       </ThemeProvider>
     </AuthProvider>
     </HelmetProvider>
+    </ErrorBoundary>
   )
 }
