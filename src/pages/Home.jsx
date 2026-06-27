@@ -228,50 +228,50 @@ export default function Home() {
         style={{ transform: `translate(${(mousePos.x - 0.5) * -10}px, ${(mousePos.y - 0.5) * -10}px)` }} />
 
       {/* ===== HERO ===== */}
-      <section ref={heroRef} onMouseMove={handleHeroMouse} className="relative pt-8 sm:pt-16 pb-4 sm:pb-8 overflow-hidden" data-section="hero">
+      <section ref={heroRef} onMouseMove={handleHeroMouse} className="relative pt-14 sm:pt-20 pb-2 sm:pb-8 overflow-hidden" data-section="hero">
         <div className="w-full">
           <div className={`text-center sm:text-left ${visible.hero ? 'animate-fade-in-up' : 'opacity-0'}`}>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-sm text-zyvo-muted mb-4 sm:mb-6">
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-zyvo-gold" />
+            <div className="inline-flex items-center gap-2 px-2 py-1 sm:px-4 sm:py-2 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-sm text-zyvo-muted mb-2 sm:mb-6">
+              <Sparkles className="w-2.5 h-2.5 sm:w-4 sm:h-4 text-zyvo-gold" />
               Des pros vérifiés en Algérie
             </div>
 
-            <h1 className="text-[2rem] sm:text-5xl lg:text-6xl font-extrabold leading-[0.95] tracking-tight">
+            <h1 className="text-[2.6rem] sm:text-5xl lg:text-6xl font-extrabold leading-[0.92] tracking-tight">
               Le <span className="hero-shimmer">bon pro</span>
               <br />
               <span className="gradient-text-brand">près de chez vous</span>
             </h1>
 
-            <p className="text-sm sm:text-lg text-zyvo-muted mt-3 sm:mt-4 max-w-xl mx-auto sm:mx-0 leading-relaxed">
+            <p className="text-xs sm:text-lg text-zyvo-muted mt-2 sm:mt-4 max-w-xl mx-auto sm:mx-0 leading-relaxed">
               Plomberie, ménage, cours, coiffure, santé… trouvez le prestataire
               vérifié qu'il vous faut, près de chez vous.
             </p>
 
-            <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 mt-5 sm:mt-6">
+            <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 mt-4 sm:mt-6">
               <Link to="/search"
-                className="group gradient-brand text-white font-bold px-5 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:scale-105 transition-all glow-worm inline-flex items-center gap-2 text-sm sm:text-base"
+                className="group gradient-brand text-white font-bold px-5 sm:px-8 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:scale-105 transition-all glow-worm inline-flex items-center gap-2 text-xs sm:text-base"
               >
-                Trouver un service <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Trouver un service <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link to="/become-provider"
-                className="glass-premium-light text-white font-bold px-5 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-white/10 hover:scale-105 transition-all text-sm sm:text-base"
+                className="glass-premium-light text-white font-bold px-5 sm:px-8 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-white/10 hover:scale-105 transition-all text-xs sm:text-base"
               >
                 Devenir prestataire
               </Link>
             </div>
 
             {/* SOCIAL PROOF */}
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-5 sm:mt-8 text-xs sm:text-sm text-zyvo-muted">
-              <div className="flex -space-x-2">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-6 mt-3 sm:mt-8 text-[10px] sm:text-sm text-zyvo-muted">
+              <div className="flex -space-x-1.5 sm:-space-x-2">
                 {['S','K','M','A'].map((letter, i) => (
-                  <div key={i} className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br ${['from-blue-500 to-cyan-400','from-purple-500 to-pink-400','from-amber-500 to-orange-400','from-emerald-500 to-teal-400'][i]} flex items-center justify-center text-[10px] sm:text-xs font-bold text-white border-2 border-zyvo-dark`}>
+                  <div key={i} className={`w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br ${['from-blue-500 to-cyan-400','from-purple-500 to-pink-400','from-amber-500 to-orange-400','from-emerald-500 to-teal-400'][i]} flex items-center justify-center text-[8px] sm:text-xs font-bold text-white border-2 border-zyvo-dark`}>
                     {letter}
                   </div>
                 ))}
               </div>
               <div>
-                <div className="flex items-center gap-1 justify-center sm:justify-start">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-zyvo-gold text-zyvo-gold" />)}
+                <div className="flex items-center gap-0.5 justify-center sm:justify-start">
+                  {[1,2,3,4,5].map(i => <Star key={i} className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 fill-zyvo-gold text-zyvo-gold" />)}
                 </div>
                 <span>Rejoint par <strong className="text-white">5 000+</strong> clients satisfaits</span>
               </div>
@@ -279,19 +279,19 @@ export default function Home() {
           </div>
 
           {/* SERVICE CARDS */}
-          <div className={`mt-6 sm:mt-10 ${visible.hero ? 'animate-fade-in-up animate-delay-200' : 'opacity-0'}`}>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+          <div className={`mt-4 sm:mt-10 ${visible.hero ? 'animate-fade-in-up animate-delay-200' : 'opacity-0'}`}>
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1.5 sm:gap-3">
               {services.slice(0, 6).map((s) => (
                 <Link
                   key={s.title}
                   to="/search"
-                  className={`glass-premium rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center card-hover group border border-transparent hover:border-white/10 ${s.bg}`}
+                  className={`glass-premium rounded-xl sm:rounded-2xl p-2 sm:p-5 text-center card-hover group border border-transparent hover:border-white/10 ${s.bg}`}
                 >
-                  <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform`}>
-                    <s.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" strokeWidth={1.5} />
+                  <div className={`w-9 h-9 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center mx-auto mb-1 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform`}>
+                    <s.icon className="w-4 h-4 sm:w-7 sm:h-7 text-white" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-bold text-[11px] sm:text-sm text-white leading-tight">{s.title.split(' ')[0]}</h3>
-                  <p className="text-[9px] sm:text-xs text-zyvo-muted mt-0.5 hidden sm:block">{s.desc.split('.')[0]}</p>
+                  <h3 className="font-bold text-[10px] sm:text-sm text-white leading-tight">{s.title.split(' ')[0]}</h3>
+                  <p className="text-[8px] sm:text-xs text-zyvo-muted mt-0.5 hidden sm:block">{s.desc.split('.')[0]}</p>
                 </Link>
               ))}
             </div>
