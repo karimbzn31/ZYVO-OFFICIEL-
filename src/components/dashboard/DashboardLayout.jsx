@@ -147,22 +147,22 @@ export default function DashboardLayout() {
 
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-premium border-t border-white/5 pb-[env(safe-area-inset-bottom,0px)]">
-        <div className="flex items-center justify-around h-12 px-1 max-w-screen-sm mx-auto">
+        <div className="flex items-center justify-around h-14 px-3">
           {bottomNavItems.map(({ to, icon: Icon, label, end, badgeKey }) => {
             const count = badgeCounts[badgeKey] || 0
             return (
-              <NavLink key={to} to={to} end={end} className="flex-1 flex items-center justify-center">
+              <NavLink key={to} to={to} end={end} className="flex items-center justify-center flex-1">
                 {({ isActive }) => (
-                  <div className={`flex flex-col items-center gap-0 py-0.5 w-full ${isActive ? 'text-zyvo-gold' : 'text-zyvo-muted'}`}>
-                    <div className="relative flex items-center justify-center w-7 h-7">
-                      <Icon className="w-[17px] h-[17px]" strokeWidth={isActive ? 2.5 : 1.5} />
+                  <div className={`flex flex-col items-center gap-0.5 ${isActive ? 'text-zyvo-gold' : 'text-zyvo-muted'}`}>
+                    <div className="relative flex items-center justify-center w-6 h-6">
+                      <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.5} />
                       {count > 0 && (
-                        <span className="absolute top-0 right-0 w-3.5 h-3.5 rounded-full bg-zyvo-gold text-[7px] font-bold text-zyvo-dark flex items-center justify-center ring-1 ring-zyvo-dark">
+                        <span className="absolute -top-1 right-0 w-3.5 h-3.5 rounded-full bg-zyvo-gold text-[7px] font-bold text-zyvo-dark flex items-center justify-center ring-2 ring-zyvo-dark">
                           {count > 9 ? '9+' : count}
                         </span>
                       )}
                     </div>
-                    <span className="text-[8px] font-semibold whitespace-nowrap truncate max-w-full px-0.5">{label}</span>
+                    <span className="text-[9px] font-semibold">{label}</span>
                   </div>
                 )}
               </NavLink>

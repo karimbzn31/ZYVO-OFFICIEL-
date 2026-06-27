@@ -277,11 +277,11 @@ export default function Accueil() {
           </div>
           <Link
             to="/dashboard/client/notifications"
-            className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl glass-premium-light flex items-center justify-center shrink-0 ml-3"
+            className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl glass-premium-light flex items-center justify-center shrink-0"
           >
-            <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-zyvo-muted" strokeWidth={1.5} />
+            <Bell className="w-5 h-5 text-zyvo-muted" strokeWidth={1.5} />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-zyvo-gold text-[8px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg">
+              <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-zyvo-gold text-[8px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg ring-2 ring-zyvo-dark">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             )}
