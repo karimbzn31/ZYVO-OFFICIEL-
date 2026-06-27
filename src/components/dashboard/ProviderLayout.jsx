@@ -109,7 +109,18 @@ export default function ProviderLayout() {
 
   const provider = useMemo(() => {
     if (!user) return null
-    return extendedProviders.find(p => p.name === user.name) || extendedProviders[0]
+    const base = extendedProviders.find(p => p.name === user.name) || extendedProviders[0]
+    if (!base) return null
+    try {
+      const raw = localStorage.getItem('zyvo_provider_edits')
+      if (raw) {
+        const edits = JSON.parse(raw)
+        if (edits[base.id]) {
+          return { ...base, ...edits[base.id] }
+        }
+      }
+    } catch {}
+    return base
   }, [user])
 
   const badgeCounts = useMemo(() => ({
