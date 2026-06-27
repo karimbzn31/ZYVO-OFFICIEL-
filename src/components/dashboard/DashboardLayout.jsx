@@ -2,12 +2,13 @@ import { useState, useMemo } from 'react'
 import { Outlet, NavLink, useNavigate, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
-  LayoutDashboard, Search, Heart, Calendar, Star, MessageCircle, User, LogOut, Menu, X
+  LayoutDashboard, Search, Heart, Calendar, Star, MessageCircle, User, LogOut, Menu, X, Bell, FileText
 } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { useFavorites } from '../../context/favorites'
 import { useBookings } from '../../context/booking'
 import { chatMessages } from '../../data/dashboardData'
+import { useNotifications } from '../../context/notifications'
 import Logo from '../Logo'
 
 const navItems = [
@@ -15,6 +16,8 @@ const navItems = [
   { to: '/dashboard/client/explorer', icon: Search, label: 'Explorer', badgeKey: null },
   { to: '/dashboard/client/favoris', icon: Heart, label: 'Favoris', badgeKey: 'favorites' },
   { to: '/dashboard/client/reservations', icon: Calendar, label: 'Réservations', badgeKey: 'bookings' },
+  { to: '/dashboard/client/mes-devis', icon: FileText, label: 'Mes Devis', badgeKey: null },
+  { to: '/dashboard/client/notifications', icon: Bell, label: 'Notifications', badgeKey: 'notifications' },
   { to: '/dashboard/client/avis', icon: Star, label: 'Mes Avis', badgeKey: null },
   { to: '/dashboard/client/messages', icon: MessageCircle, label: 'Messages', badgeKey: 'messages' },
   { to: '/dashboard/client/profil', icon: User, label: 'Profil', badgeKey: null },
@@ -23,7 +26,7 @@ const navItems = [
 const bottomNavItems = [
   { to: '/dashboard/client', icon: LayoutDashboard, label: 'Accueil', end: true, badgeKey: null },
   { to: '/dashboard/client/explorer', icon: Search, label: 'Explorer', badgeKey: null },
-  { to: '/dashboard/client/favoris', icon: Heart, label: 'Favoris', badgeKey: 'favorites' },
+  { to: '/dashboard/client/notifications', icon: Bell, label: 'Notifications', badgeKey: 'notifications' },
   { to: '/dashboard/client/messages', icon: MessageCircle, label: 'Messages', badgeKey: 'messages' },
   { to: '/dashboard/client/profil', icon: User, label: 'Profil', badgeKey: null },
 ]
@@ -98,13 +101,15 @@ export default function DashboardLayout() {
   const { user } = useAuth()
   const { favorites } = useFavorites()
   const { bookings } = useBookings()
+  const { unreadCount: unreadNotifications } = useNotifications()
   const location = useLocation()
 
   const badgeCounts = useMemo(() => ({
     favorites: favorites.length,
     bookings: bookings.filter(b => b.status === 'En attente' || b.status === 'Confirmée').length,
     messages: chatMessages.filter(c => c.unread > 0).length,
-  }), [favorites, bookings])
+    notifications: unreadNotifications,
+  }), [favorites, bookings, unreadNotifications])
 
   return (
     <div className="min-h-screen bg-zyvo-dark">

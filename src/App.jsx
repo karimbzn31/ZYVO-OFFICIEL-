@@ -56,6 +56,9 @@ const DashboardMesAvis = lazy(() => import('./pages/dashboard/MesAvis'))
 const DashboardMesReservations = lazy(() => import('./pages/dashboard/MesReservations'))
 const DashboardMessagerie = lazy(() => import('./pages/dashboard/Messagerie'))
 const DashboardProfil = lazy(() => import('./pages/dashboard/Profil'))
+const DashboardNotifications = lazy(() => import('./pages/dashboard/Notifications'))
+const DashboardDemanderDevis = lazy(() => import('./pages/dashboard/DemanderDevis'))
+const DashboardMesDevis = lazy(() => import('./pages/dashboard/MesDevis'))
 const DashboardPrestataireProfil = lazy(() => import('./pages/dashboard/PrestataireProfil'))
 
 function ScrollToTop() {
@@ -141,6 +144,9 @@ function AppContent() {
                   <Route path="messages" element={<DashboardMessagerie />} />
                   <Route path="profil" element={<DashboardProfil />} />
                   <Route path="prestataire/:id" element={<DashboardPrestataireProfil />} />
+                  <Route path="notifications" element={<DashboardNotifications />} />
+                  <Route path="demander-devis" element={<DashboardDemanderDevis />} />
+                  <Route path="mes-devis" element={<DashboardMesDevis />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
