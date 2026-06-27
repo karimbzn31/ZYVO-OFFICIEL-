@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { Star, ThumbsUp, Edit3, Trash2, MessageCircle } from 'lucide-react'
+import { useLoading } from '../../hooks/useLoading'
+import { ListSkeleton } from '../../components/dashboard/Skeleton'
 import { userReviews } from '../../data/dashboardData'
 
 export default function MesAvis() {
+  const loading = useLoading(300)
   const [reviews, setReviews] = useState(userReviews)
+
+  if (loading) return <div className="space-y-4"><ListSkeleton count={2} /></div>
 
   const handleDelete = (id) => {
     setReviews(prev => prev.filter(r => r.id !== id))

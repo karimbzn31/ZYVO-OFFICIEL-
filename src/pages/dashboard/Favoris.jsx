@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Heart, Star, MapPin, Trash2, ShoppingBag } from 'lucide-react'
+import { Heart, Star, MapPin, Trash2 } from 'lucide-react'
 import { useFavorites } from '../../context/favorites'
+import { useLoading } from '../../hooks/useLoading'
+import { GridSkeleton } from '../../components/dashboard/Skeleton'
 
 export default function Favoris() {
+  const loading = useLoading(300)
   const { favorites, removeFavorite } = useFavorites()
+
+  if (loading) return <div className="space-y-4"><GridSkeleton count={3} /></div>
 
   return (
     <div className="space-y-4 sm:space-y-6">

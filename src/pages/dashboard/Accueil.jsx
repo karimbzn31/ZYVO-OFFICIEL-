@@ -1,13 +1,15 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { 
-  Search, MapPin, Star, Heart, Clock, ArrowRight, TrendingUp, 
+  Search, Star, Heart, ArrowRight, TrendingUp, 
   Users, Sparkles, ChevronRight, Calendar, History
 } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { useFavorites } from '../../context/favorites'
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed'
+import { useLoading } from '../../hooks/useLoading'
 import { extendedProviders, activityFeed, myBookings, recentSearches } from '../../data/dashboardData'
+import { CardSkeleton, GridSkeleton, ListSkeleton } from '../../components/dashboard/Skeleton'
 
 function StatCard({ icon: Icon, label, value, gradient }) {
   return (
@@ -39,8 +41,7 @@ function ProviderCardSmall({ provider }) {
             <p className="text-xs text-zyvo-muted">{provider.service}</p>
           </div>
         </div>
-        <button
-          onClick={(e) => { e.preventDefault(); toggleFavorite(provider) }}
+        <button onClick={(e) => { e.preventDefault(); toggleFavorite(provider) }}
           className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
             fav ? 'bg-pink-500/20 text-pink-400' : 'bg-white/5 text-zyvo-muted hover:text-white hover:bg-white/10'
           }`}
@@ -49,9 +50,7 @@ function ProviderCardSmall({ provider }) {
         </button>
       </div>
       <div className="flex items-center gap-3 text-xs">
-        <span className="flex items-center gap-1 text-amber-400 font-bold">
-          <Star className="w-3 h-3 fill-amber-400" />{provider.rating}
-        </span>
+        <span className="flex items-center gap-1 text-amber-400 font-bold"><Star className="w-3 h-3 fill-amber-400" />{provider.rating}</span>
         <span className="text-zyvo-muted">{provider.city}</span>
         <span className="ml-auto font-bold text-white">{provider.price}</span>
       </div>
@@ -63,6 +62,7 @@ export default function Accueil() {
   const { user } = useAuth()
   const { favorites } = useFavorites()
   const { recent } = useRecentlyViewed()
+  const loading = useLoading(300)
   const [searchQuery, setSearchQuery] = useState('')
 
   const topProviders = useMemo(() => 
@@ -77,6 +77,19 @@ export default function Accueil() {
   const filteredRecent = recentSearches.filter(s =>
     s.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  if (loading) {
+    return (
+      <div className="space-y-6 sm:space-y-8">
+        <CardSkeleton />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          {[1,2,3,4].map(i => <CardSkeleton key={i} />)}
+        </div>
+        <GridSkeleton count={4} />
+        <ListSkeleton count={4} />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 sm:space-y-8">

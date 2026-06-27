@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Calendar, MapPin, Clock, ChevronRight, XCircle, 
-  CheckCircle, AlertCircle, MessageCircle, Star
+  CheckCircle, AlertCircle
 } from 'lucide-react'
+import { useLoading } from '../../hooks/useLoading'
+import { ListSkeleton } from '../../components/dashboard/Skeleton'
 import { myBookings } from '../../data/dashboardData'
 
 const statusIcons = {
@@ -21,6 +23,7 @@ const statusColors = {
 }
 
 export default function MesReservations() {
+  const loading = useLoading(300)
   const [filter, setFilter] = useState('all')
 
   const filtered = filter === 'all'
@@ -30,6 +33,8 @@ export default function MesReservations() {
         if (filter === 'past') return b.status === 'Terminée' || b.status === 'Annulée'
         return true
       })
+
+  if (loading) return <div className="space-y-4"><ListSkeleton count={3} /></div>
 
   return (
     <div className="space-y-4 sm:space-y-6">

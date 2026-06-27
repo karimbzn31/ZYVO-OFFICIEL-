@@ -1,22 +1,47 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { 
-  Star, Heart, MapPin, ShieldCheck, ChevronLeft, MessageCircle, 
-  Calendar, Share2, ThumbsUp, Clock, Award, Users, Phone, 
-  CheckCircle, BadgeCheck, Camera
+  Star, Heart, MapPin, ChevronLeft, MessageCircle, 
+  Calendar, Share2, ThumbsUp, Clock, Award, Users, 
+  CheckCircle, BadgeCheck, Camera, Check
 } from 'lucide-react'
 import { useFavorites } from '../../context/favorites'
+import { useToast } from '../../context/toast'
 import { extendedProviders, reviews, userReviews } from '../../data/dashboardData'
 import BookingModal from '../../components/dashboard/BookingModal'
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed'
+import { useLoading } from '../../hooks/useLoading'
+import { ProfileCardSkeleton } from '../../components/dashboard/Skeleton'
 
 export default function PrestataireProfil() {
   const { id } = useParams()
   const provider = extendedProviders.find(p => p.id === Number(id))
   const { isFavorite, toggleFavorite } = useFavorites()
+  const addToast = useToast()
   const { addView } = useRecentlyViewed()
+  const loading = useLoading(400)
   const [showBooking, setShowBooking] = useState(false)
   const [newRating, setNewRating] = useState(0)
+  const [copied, setCopied] = useState(false)
+
+  const handleShare = async () => {
+    const url = window.location.href
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      addToast('Lien copié !', { message: 'Profil partagé', type: 'success' })
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      addToast('Erreur', { message: 'Impossible de copier le lien', type: 'error' })
+    }
+  }
+
+  const handleToggleFav = () => {
+    toggleFavorite(provider)
+    if (!isFavorite(provider.id)) {
+      addToast('Ajouté aux favoris ❤️', { message: provider.name, type: 'success' })
+    }
+  }
   const [newComment, setNewComment] = useState('')
   const [hoverRating, setHoverRating] = useState(0)
   const [showReviewForm, setShowReviewForm] = useState(false)
@@ -30,6 +55,7 @@ export default function PrestataireProfil() {
 
   useEffect(() => { if (provider) addView(provider) }, [provider])
 
+  if (loading) return <ProfileCardSkeleton />
   if (!provider) {
     return (
       <div className="text-center py-16">
@@ -50,7 +76,7 @@ export default function PrestataireProfil() {
 
   const handleSubmitReview = () => {
     if (newRating === 0 || !newComment.trim()) return
-    alert('Votre avis a été publié ! (Fonctionnalité disponible au lancement)')
+    addToast('Avis publié ! ⭐', { message: 'Merci pour votre retour', type: 'success' })
     setNewRating(0)
     setNewComment('')
     setShowReviewForm(false)
@@ -84,7 +110,7 @@ export default function PrestataireProfil() {
       {/* Actions Bar */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <button
-          onClick={() => toggleFavorite(provider)}
+          onClick={handleToggleFav}
           className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
             fav
               ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30'
@@ -98,12 +124,12 @@ export default function PrestataireProfil() {
           <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           Réserver
         </button>
-        <button className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-white/5 text-white hover:bg-white/10 border border-white/10 text-xs sm:text-sm font-bold transition-all">
+        <Link to={`/dashboard/client/messages`} className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-white/5 text-white hover:bg-white/10 border border-white/10 text-xs sm:text-sm font-bold transition-all">
           <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           Contacter
-        </button>
-        <button className="ml-auto p-2 sm:p-2.5 rounded-xl bg-white/5 text-zyvo-muted hover:text-white hover:bg-white/10 transition-all">
-          <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        </Link>
+        <button onClick={handleShare} className="ml-auto p-2 sm:p-2.5 rounded-xl bg-white/5 text-zyvo-muted hover:text-white hover:bg-white/10 transition-all">
+          {copied ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
         </button>
       </div>
 

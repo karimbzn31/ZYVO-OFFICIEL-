@@ -2,10 +2,12 @@ import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Search, Star, Heart, MapPin, SlidersHorizontal, X, 
-  ArrowUpDown, Wrench, Home, Monitor, Truck, GraduationCap, HeartPulse
+  Wrench, Home, Monitor, Truck, GraduationCap, HeartPulse
 } from 'lucide-react'
 import { useFavorites } from '../../context/favorites'
 import { extendedProviders, cities } from '../../data/dashboardData'
+import { useLoading } from '../../hooks/useLoading'
+import { GridSkeleton } from '../../components/dashboard/Skeleton'
 
 const categories = [
   { key: 'all', label: 'Tous', icon: Search },
@@ -82,6 +84,7 @@ function ProviderCard({ provider }) {
 }
 
 export default function Explorer() {
+  const loading = useLoading(350)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedCity, setSelectedCity] = useState('')
@@ -116,6 +119,22 @@ export default function Explorer() {
   }, [searchQuery, selectedCategory, selectedCity, sortBy])
 
   const activeFilters = [selectedCategory !== 'all', selectedCity !== '', searchQuery !== ''].filter(Boolean).length
+
+  if (loading) {
+    return (
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="h-6 w-40 rounded bg-white/5 animate-pulse" />
+          <div className="h-8 w-20 rounded-xl bg-white/5 animate-pulse" />
+        </div>
+        <div className="h-12 rounded-2xl bg-white/5 animate-pulse" />
+        <div className="flex gap-2">
+          {[1,2,3,4,5].map(i => <div key={i} className="h-8 w-20 rounded-xl bg-white/5 animate-pulse" />)}
+        </div>
+        <GridSkeleton count={6} />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6">

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useBookings } from '../../context/booking'
 import { useAuth } from '../../context/auth'
+import { useToast } from '../../context/toast'
 
 const timeSlots = [
   { label: 'Matin', times: ['08:00', '09:00', '10:00', '11:00'] },
@@ -16,6 +17,7 @@ const timeSlots = [
 export default function BookingModal({ provider, open, onClose }) {
   const { addBooking } = useBookings()
   const { user } = useAuth()
+  const addToast = useToast()
   const [step, setStep] = useState(1)
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
@@ -35,6 +37,7 @@ export default function BookingModal({ provider, open, onClose }) {
       notes,
       userPhone: user?.phone || '',
     })
+    addToast('Réservation confirmée ! 🎉', { message: `${provider.name} · ${new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long'})} à ${time}`, type: 'success' })
     setConfirmed(true)
     setTimeout(() => {
       setConfirmed(false)
