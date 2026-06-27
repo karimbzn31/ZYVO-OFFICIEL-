@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight } from 'lucide-react'
+import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown } from 'lucide-react'
 import { useAuth } from '../context/auth'
 
 const algerianCities = [
@@ -8,6 +8,48 @@ const algerianCities = [
   'Sétif', 'Batna', 'Djelfa', 'Sidi Bel Abbès', 'Biskra', 'Tlemcen',
   'Béjaïa', 'Bordj Bou Arreridj', 'Chlef', 'Médéa', 'Mostaganem', 'Ain Oulmene'
 ]
+
+function CitySelect({ value, onChange }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  return (
+    <div ref={ref} className="relative flex-1">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between bg-transparent outline-none text-sm font-semibold"
+      >
+        <span className={value ? 'text-white' : 'text-zyvo-muted'}>
+          {value || 'Sélectionnez votre ville'}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-zyvo-muted shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 right-0 mt-1 z-50 glass-premium rounded-xl border border-white/10 shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
+          {algerianCities.map(c => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => { onChange(c); setOpen(false) }}
+              className={`w-full text-left px-4 py-3 text-sm font-semibold transition-colors hover:bg-white/10 ${
+                value === c ? 'text-zyvo-gold bg-zyvo-gold/10' : 'text-white'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function Auth() {
   const [mode, setMode] = useState('register')
@@ -106,15 +148,7 @@ export default function Auth() {
             <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Ville</label>
             <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
               <MapPin className="w-4 h-4 text-zyvo-muted shrink-0" />
-              <select
-                value={city}
-                onChange={e => setCity(e.target.value)}
-                className="w-full bg-transparent outline-none text-sm font-semibold text-white appearance-none cursor-pointer"
-                required
-              >
-                <option value="" disabled className="text-zyvo-muted">Sélectionnez votre ville</option>
-                {algerianCities.map(c => <option key={c} value={c} className="text-white">{c}</option>)}
-              </select>
+              <CitySelect value={city} onChange={setCity} />
             </div>
           </div>
 
