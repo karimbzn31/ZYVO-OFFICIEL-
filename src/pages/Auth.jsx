@@ -23,7 +23,7 @@ export default function Auth() {
     setEmailError(err)
     if (err) return
     login(email, email.split('@')[0], 'client')
-    navigate('/profile')
+    navigate('/dashboard/client')
   }
 
   return (
