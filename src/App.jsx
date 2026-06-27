@@ -48,6 +48,15 @@ const BlogPost = lazy(() => import('./pages/BlogPost'))
 const ServicePage = lazy(() => import('./pages/ServicePage'))
 const CityPage = lazy(() => import('./pages/CityPage'))
 const Voucher = lazy(() => import('./pages/Voucher'))
+const DashboardLayout = lazy(() => import('./components/dashboard/DashboardLayout'))
+const DashboardAccueil = lazy(() => import('./pages/dashboard/Accueil'))
+const DashboardExplorer = lazy(() => import('./pages/dashboard/Explorer'))
+const DashboardFavoris = lazy(() => import('./pages/dashboard/Favoris'))
+const DashboardMesAvis = lazy(() => import('./pages/dashboard/MesAvis'))
+const DashboardMesReservations = lazy(() => import('./pages/dashboard/MesReservations'))
+const DashboardMessagerie = lazy(() => import('./pages/dashboard/Messagerie'))
+const DashboardProfil = lazy(() => import('./pages/dashboard/Profil'))
+const DashboardPrestataireProfil = lazy(() => import('./pages/dashboard/PrestataireProfil'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -73,6 +82,78 @@ function NoiseOverlay() {
   return <div className="noise-overlay" />
 }
 
+function AppContent() {
+  const { pathname } = useLocation()
+  const isDashboard = pathname.startsWith('/dashboard')
+
+  return (
+    <>
+      <SEO />
+      <div className="min-h-screen bg-zyvo-dark font-sans text-white">
+        <div className="mesh-bg">
+          <div className="mesh-dot" />
+        </div>
+        <NoiseOverlay />
+        <CommandPalette />
+        <NotificationPanel />
+        <ScrollToTop />
+        {!isDashboard && <Header />}
+        <main className={!isDashboard ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 sm:pb-8 relative" : ""}>
+          <PageTransition>
+            <Suspense fallback={<LoadingScreen />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/bookings" element={<Bookings />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/provider/:id" element={<ProviderDetail />} />
+                <Route path="/provider/dashboard" element={<ProviderDashboard />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/cities" element={<Cities />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/category/:slug" element={<CategoryPage />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/legal" element={<Legal />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/reviews" element={<Reviews />} />
+                <Route path="/become-provider" element={<BecomeProvider />} />
+                <Route path="/refer" element={<Refer />} />
+                <Route path="/booking/:id" element={<BookingDetail />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/service/:slug" element={<ServicePage />} />
+                <Route path="/cities/:city" element={<CityPage />} />
+                <Route path="/voucher" element={<Voucher />} />
+                {/* Dashboard */}
+                <Route path="/dashboard/client" element={<DashboardLayout />}>
+                  <Route index element={<DashboardAccueil />} />
+                  <Route path="explorer" element={<DashboardExplorer />} />
+                  <Route path="favoris" element={<DashboardFavoris />} />
+                  <Route path="reservations" element={<DashboardMesReservations />} />
+                  <Route path="avis" element={<DashboardMesAvis />} />
+                  <Route path="messages" element={<DashboardMessagerie />} />
+                  <Route path="profil" element={<DashboardProfil />} />
+                  <Route path="prestataire/:id" element={<DashboardPrestataireProfil />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </PageTransition>
+        </main>
+        {!isDashboard && <Footer />}
+        {!isDashboard && <BottomNav />}
+      </div>
+    </>
+  )
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
@@ -84,57 +165,7 @@ export default function App() {
       <NotificationProvider>
       <BookingProvider>
       <ToastProvider>
-        <SEO />
-        <div className="min-h-screen bg-zyvo-dark font-sans text-white">
-          <div className="mesh-bg">
-            <div className="mesh-dot" />
-          </div>
-          <NoiseOverlay />
-          <CommandPalette />
-          <NotificationPanel />
-          <ScrollToTop />
-          <Header />
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 sm:pb-8 relative">
-            <PageTransition>
-              <Suspense fallback={<LoadingScreen />}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/search" element={<SearchPage />} />
-                  <Route path="/bookings" element={<Bookings />} />
-                  <Route path="/favorites" element={<Favorites />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/provider/:id" element={<ProviderDetail />} />
-                  <Route path="/provider/dashboard" element={<ProviderDashboard />} />
-                  <Route path="/messages" element={<Messages />} />
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/how-it-works" element={<HowItWorks />} />
-                  <Route path="/cities" element={<Cities />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/category/:slug" element={<CategoryPage />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/reviews" element={<Reviews />} />
-                  <Route path="/become-provider" element={<BecomeProvider />} />
-                  <Route path="/refer" element={<Refer />} />
-                  <Route path="/booking/:id" element={<BookingDetail />} />
-                  <Route path="/support" element={<Support />} />
-                  <Route path="/blog/:slug" element={<BlogPost />} />
-                  <Route path="/service/:slug" element={<ServicePage />} />
-                  <Route path="/cities/:city" element={<CityPage />} />
-                  <Route path="/voucher" element={<Voucher />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </PageTransition>
-          </main>
-          <Footer />
-          <BottomNav />
-        </div>
+        <AppContent />
       </ToastProvider>
       </BookingProvider>
       </NotificationProvider>

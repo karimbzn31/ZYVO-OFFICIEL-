@@ -93,7 +93,7 @@ export default function Header() {
               <NotificationBell />
               {user ? (
                 <Link
-                  to="/profile"
+                  to={user.role === 'prestataire' ? '/provider/dashboard' : '/dashboard/client'}
                   className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl gradient-primary flex items-center justify-center text-[10px] sm:text-xs font-bold text-white shadow-lg"
                 >
                   {user.name.charAt(0)}
