@@ -5,7 +5,7 @@ import {
   ShieldCheck, Star, Clock, DollarSign,
   ChevronRight, LogOut, Camera, CheckCircle, AlertCircle, Edit3, Save,
   X, Plus, Image, Hash, MapPin, Palette, Phone, Mail, User,
-  Globe, Calendar, Briefcase, FileText,
+  Globe, Calendar, Briefcase, FileText, Link,
   Clock as ClockIcon
 } from 'lucide-react'
 import { useAuth } from '../../../context/auth'
@@ -674,7 +674,7 @@ export default function ProviderProfil() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center shrink-0">
-                    <Instagram className="w-3.5 h-3.5 text-pink-400" />
+                    <Link className="w-3.5 h-3.5 text-pink-400" />
                   </div>
                   <InlineInput value={form.instagram} onChange={e => update('instagram', e.target.value)} placeholder="Instagram (ex: @votre_compte)" />
                 </div>
