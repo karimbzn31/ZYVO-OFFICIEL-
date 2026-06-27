@@ -1,28 +1,35 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff, ChevronLeft, Sparkles } from 'lucide-react'
+import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight } from 'lucide-react'
 import { useAuth } from '../context/auth'
 
+const algerianCities = [
+  'Alger', 'Oran', 'Constantine', 'Blida', 'Annaba', 'Tizi Ouzou',
+  'Sétif', 'Batna', 'Djelfa', 'Sidi Bel Abbès', 'Biskra', 'Tlemcen',
+  'Béjaïa', 'Bordj Bou Arreridj', 'Chlef', 'Médéa', 'Mostaganem', 'Ain Oulmene'
+]
+
 export default function Auth() {
-  const [mode, setMode] = useState('login')
+  const [mode, setMode] = useState('register')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [city, setCity] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPwd, setShowPwd] = useState(false)
-  const [emailError, setEmailError] = useState('')
-  const { login } = useAuth()
+  const [loginPhone, setLoginPhone] = useState('')
+  const { login, register } = useAuth()
   const navigate = useNavigate()
 
-  const validateEmail = (v) => {
-    if (!v) return ''
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Email invalide'
+  const handleRegister = (e) => {
+    e.preventDefault()
+    if (!name.trim() || !phone.trim() || !city) return
+    register({ name: name.trim(), phone, email, city })
+    navigate('/dashboard/client')
   }
 
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault()
-    const err = validateEmail(email)
-    setEmailError(err)
-    if (err) return
-    login(email, email.split('@')[0], 'client')
+    if (!loginPhone.trim()) return
+    login(loginPhone, 'Utilisateur')
     navigate('/dashboard/client')
   }
 
@@ -34,73 +41,113 @@ export default function Auth() {
           <Sparkles className="w-7 h-7 text-white relative z-10" />
         </div>
         <h1 className="text-2xl font-extrabold">
-          {mode === 'login' ? 'Connexion' : 'Créer un compte'}
+          {mode === 'login' ? 'Bon retour' : 'Créer un compte'}
         </h1>
         <p className="text-sm text-zyvo-muted mt-1">
           {mode === 'login'
-            ? 'Connectez-vous avec vos identifiants'
-            : 'Créez votre compte Zyvo'}
+            ? 'Connectez-vous à votre compte Zyvo'
+            : 'Rejoignez le marché Zyvo'}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Email</label>
-          <div className={`flex items-center gap-2 glass-premium rounded-xl px-4 h-12 transition-all border ${emailError ? 'border-zyvo-error/50' : 'border-transparent focus-within:border-zyvo-gold/40'}`}>
-            <Mail className="w-4 h-4 text-zyvo-muted shrink-0" />
-            <input
-              type="email"
-              placeholder="exemple@email.com"
-              value={email}
-              onChange={e => { setEmail(e.target.value); setEmailError('') }}
-              className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-              required
-            />
+      {mode === 'login' ? (
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Numéro de téléphone</label>
+            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+              <Phone className="w-4 h-4 text-zyvo-muted shrink-0" />
+              <input
+                type="tel"
+                placeholder="05 55 XX XX XX"
+                value={loginPhone}
+                onChange={e => setLoginPhone(e.target.value)}
+                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+                required
+              />
+            </div>
           </div>
-          {emailError && <p className="text-xs text-zyvo-error mt-1.5">{emailError}</p>}
-        </div>
-
-        <div>
-          <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Mot de passe</label>
-          <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 focus-within:border-zyvo-gold/40 transition-all border border-transparent">
-            <Lock className="w-4 h-4 text-zyvo-muted shrink-0" />
-            <input
-              type={showPwd ? 'text' : 'password'}
-              placeholder="Votre mot de passe"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-              required
-            />
-            <button type="button" onClick={() => setShowPwd(!showPwd)} className="text-zyvo-muted hover:text-white transition-colors">
-              {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
+          <button type="submit" className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] transition-all duration-300 glow-worm flex items-center justify-center gap-2">
+            Se connecter <ArrowRight className="w-4 h-4" />
+          </button>
+        </form>
+      ) : (
+        <form onSubmit={handleRegister} className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Nom complet</label>
+            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+              <User className="w-4 h-4 text-zyvo-muted shrink-0" />
+              <input
+                type="text"
+                placeholder="Votre nom et prénom"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+                required
+              />
+            </div>
           </div>
-          {mode === 'login' && (
-            <button type="button" className="text-xs text-zyvo-gold font-bold hover:underline mt-1.5">
-              Mot de passe oublié ?
-            </button>
-          )}
-        </div>
 
-        <button
-          type="submit"
-          className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] transition-all duration-300 glow-worm"
-        >
-          {mode === 'login' ? 'Se connecter' : "S'inscrire"}
-        </button>
-      </form>
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Téléphone</label>
+            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+              <Phone className="w-4 h-4 text-zyvo-muted shrink-0" />
+              <input
+                type="tel"
+                placeholder="05 55 XX XX XX"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Ville</label>
+            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+              <MapPin className="w-4 h-4 text-zyvo-muted shrink-0" />
+              <select
+                value={city}
+                onChange={e => setCity(e.target.value)}
+                className="w-full bg-transparent outline-none text-sm font-semibold text-white appearance-none cursor-pointer"
+                required
+              >
+                <option value="" disabled className="text-zyvo-muted">Sélectionnez votre ville</option>
+                {algerianCities.map(c => <option key={c} value={c} className="text-white">{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Email <span className="font-normal text-zyvo-muted/60">(facultatif)</span></label>
+            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+              <Mail className="w-4 h-4 text-zyvo-muted shrink-0" />
+              <input
+                type="email"
+                placeholder="exemple@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] transition-all duration-300 glow-worm flex items-center justify-center gap-2">
+            S'inscrire <ArrowRight className="w-4 h-4" />
+          </button>
+        </form>
+      )}
 
       <div className="text-center mt-6">
         <p className="text-sm text-zyvo-muted">
           {mode === 'login' ? (
-            <>Vous n'avez pas de compte ?{' '}
+            <>Pas encore de compte ?{' '}
               <button type="button" onClick={() => setMode('register')} className="text-zyvo-gold font-bold hover:underline">
-                S'inscrire
+                Créer un compte
               </button>
             </>
           ) : (
-            <>Déjà un compte ?{' '}
+            <>Déjà inscrit ?{' '}
               <button type="button" onClick={() => setMode('login')} className="text-zyvo-gold font-bold hover:underline">
                 Se connecter
               </button>
@@ -108,11 +155,6 @@ export default function Auth() {
           )}
         </p>
       </div>
-
-      <p className="text-center text-xs text-zyvo-muted mt-6">
-        En continuant, vous acceptez les{' '}
-        <a href="#" className="text-zyvo-gold font-bold hover:underline">Conditions d'utilisation</a>
-      </p>
 
       <button
         onClick={() => navigate(-1)}

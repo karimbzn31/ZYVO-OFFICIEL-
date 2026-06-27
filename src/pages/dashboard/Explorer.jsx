@@ -1,11 +1,12 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Search, Star, Heart, MapPin, SlidersHorizontal, X, 
-  Wrench, Home, Monitor, Truck, GraduationCap, HeartPulse
+  Wrench, Home, Monitor, Truck, GraduationCap, HeartPulse, Navigation
 } from 'lucide-react'
 import { useFavorites } from '../../context/favorites'
-import { extendedProviders, cities } from '../../data/dashboardData'
+import { useAuth } from '../../context/auth'
+import { extendedProviders, cities as allCities } from '../../data/dashboardData'
 import { useLoading } from '../../hooks/useLoading'
 import { GridSkeleton } from '../../components/dashboard/Skeleton'
 
@@ -28,15 +29,63 @@ const sortOptions = [
   { key: 'popular', label: 'Popularité' },
 ]
 
-function ProviderCard({ provider }) {
+const digitalCategories = ['cours', 'developpement', 'design', 'marketing', 'redaction', 'sante']
+
+const algeriaCitiesCoords = {
+  'Alger': { lat: 36.75, lng: 3.04 },
+  'Oran': { lat: 35.69, lng: -0.64 },
+  'Constantine': { lat: 36.37, lng: 6.61 },
+  'Blida': { lat: 36.47, lng: 2.83 },
+  'Annaba': { lat: 36.90, lng: 7.77 },
+  'Tizi Ouzou': { lat: 36.72, lng: 4.04 },
+  'Sétif': { lat: 36.19, lng: 5.41 },
+  'Batna': { lat: 35.56, lng: 6.18 },
+  'Djelfa': { lat: 34.67, lng: 3.25 },
+  'Sidi Bel Abbès': { lat: 35.19, lng: -0.64 },
+  'Biskra': { lat: 34.85, lng: 5.73 },
+  'Tlemcen': { lat: 34.88, lng: -1.31 },
+  'Béjaïa': { lat: 36.75, lng: 5.07 },
+  'Bordj Bou Arreridj': { lat: 36.07, lng: 4.76 },
+  'Chlef': { lat: 36.16, lng: 1.33 },
+  'Médéa': { lat: 36.27, lng: 2.76 },
+  'Mostaganem': { lat: 35.93, lng: 0.09 },
+  'Ain Oulmene': { lat: 35.92, lng: 5.30 },
+}
+
+function findNearestCity(lat, lng) {
+  let nearest = null
+  let minDist = Infinity
+  for (const [city, coords] of Object.entries(algeriaCitiesCoords)) {
+    const d = Math.sqrt((lat - coords.lat) ** 2 + (lng - coords.lng) ** 2)
+    if (d < minDist) { minDist = d; nearest = city }
+  }
+  return minDist < 0.5 ? nearest : null
+}
+
+function ProviderCard({ provider, detectedCity }) {
   const { isFavorite, toggleFavorite } = useFavorites()
   const fav = isFavorite(provider.id)
+  const isDigital = digitalCategories.includes(provider.category)
+  const isNearby = detectedCity && provider.city === detectedCity && !isDigital
 
   return (
     <Link to={`/dashboard/client/prestataire/${provider.id}`} className="glass-premium rounded-2xl overflow-hidden card-hover group block">
       {/* Cover */}
       <div className={`h-20 sm:h-28 bg-gradient-to-br ${provider.coverGradient} relative`}>
         <div className="absolute inset-0 bg-black/20" />
+        {/* Badges */}
+        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1.5">
+          {isNearby && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/30 text-emerald-300 text-[9px] sm:text-[10px] font-bold backdrop-blur">
+              <Navigation className="w-2.5 h-2.5" /> À proximité
+            </span>
+          )}
+          {isDigital && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-500/30 text-blue-300 text-[9px] sm:text-[10px] font-bold backdrop-blur">
+              🌍 En ligne
+            </span>
+          )}
+        </div>
         <button
           onClick={(e) => { e.preventDefault(); toggleFavorite(provider) }}
           className={`absolute top-2 right-2 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all ${
@@ -68,6 +117,7 @@ function ProviderCard({ provider }) {
           <span className="flex items-center gap-0.5 sm:gap-1 text-zyvo-muted">
             <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             {provider.city}
+            {isDigital && <span className="text-blue-400 text-[9px] ml-0.5">· En ligne</span>}
           </span>
           {provider.badges.includes('Vérifié') && (
             <span className="text-emerald-400 font-bold">✓ Vérifié</span>
@@ -85,11 +135,35 @@ function ProviderCard({ provider }) {
 
 export default function Explorer() {
   const loading = useLoading(350)
+  const { user } = useAuth()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedCity, setSelectedCity] = useState('')
   const [sortBy, setSortBy] = useState('rating')
   const [showFilters, setShowFilters] = useState(false)
+  const [detectedCity, setDetectedCity] = useState(user?.city || '')
+  const [geoStatus, setGeoStatus] = useState(user?.city ? 'detected' : 'idle')
+
+  useEffect(() => {
+    if (detectedCity) return
+    if (!navigator.geolocation) { setGeoStatus('unavailable'); return }
+    setGeoStatus('locating')
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const city = findNearestCity(pos.coords.latitude, pos.coords.longitude)
+        if (city) { setDetectedCity(city); setGeoStatus('detected') }
+        else setGeoStatus('unavailable')
+      },
+      () => setGeoStatus('unavailable'),
+      { timeout: 5000, enableHighAccuracy: false }
+    )
+  }, [detectedCity])
+
+  const cities = useMemo(() => {
+    const c = [...allCities]
+    if (detectedCity && !c.includes(detectedCity)) c.unshift(detectedCity)
+    return c.sort()
+  }, [detectedCity])
 
   const filtered = useMemo(() => {
     let result = [...extendedProviders]
@@ -141,18 +215,25 @@ export default function Explorer() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl sm:text-2xl font-extrabold">Explorer <span className="gradient-text-brand">le marché</span></h1>
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-xs sm:text-sm font-semibold"
-        >
-          <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          <span className="hidden sm:inline">Filtres</span>
-          {activeFilters > 0 && (
-            <span className="w-4 h-4 rounded-full bg-zyvo-gold text-[9px] font-bold text-zyvo-dark flex items-center justify-center">
-              {activeFilters}
+        <div className="flex items-center gap-2">
+          {geoStatus === 'detected' && detectedCity && (
+            <span className="hidden sm:inline-flex items-center gap-1 text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-1 rounded-full">
+              <Navigation className="w-3 h-3" /> {detectedCity}
             </span>
           )}
-        </button>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-xs sm:text-sm font-semibold"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Filtres</span>
+            {activeFilters > 0 && (
+              <span className="w-4 h-4 rounded-full bg-zyvo-gold text-[9px] font-bold text-zyvo-dark flex items-center justify-center">
+                {activeFilters}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Search */}
@@ -198,14 +279,19 @@ export default function Explorer() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <p className="text-xs font-semibold text-zyvo-muted mb-2 uppercase tracking-wider">Ville</p>
-              <select
-                value={selectedCity}
-                onChange={e => setSelectedCity(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-zyvo-gold/40 transition-colors appearance-none cursor-pointer"
-              >
-                <option value="">Toutes les villes</option>
-                {cities.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <div className="relative">
+                <select
+                  value={selectedCity}
+                  onChange={e => setSelectedCity(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-zyvo-gold/40 transition-colors appearance-none cursor-pointer"
+                >
+                  <option value="">Toutes les villes</option>
+                  {detectedCity && (
+                    <option value={detectedCity}>📍 {detectedCity} (ma position)</option>
+                  )}
+                  {cities.filter(c => c !== detectedCity).map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
             </div>
             <div className="flex-1">
               <p className="text-xs font-semibold text-zyvo-muted mb-2 uppercase tracking-wider">Trier par</p>
@@ -255,7 +341,7 @@ export default function Explorer() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {filtered.map(p => (
-              <ProviderCard key={p.id} provider={p} />
+              <ProviderCard key={p.id} provider={p} detectedCity={detectedCity} />
             ))}
           </div>
         )}

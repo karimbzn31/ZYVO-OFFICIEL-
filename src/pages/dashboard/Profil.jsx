@@ -48,7 +48,7 @@ export default function Profil() {
           </div>
           <div>
             <p className="text-[10px] sm:text-xs text-zyvo-muted">Email</p>
-            <p className="text-xs sm:text-sm font-semibold text-white">{user?.email || 'client@zyvo.dz'}</p>
+            <p className="text-xs sm:text-sm font-semibold text-white">{user?.email || 'Non renseigné'}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 sm:gap-4">
@@ -65,8 +65,8 @@ export default function Profil() {
             <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
           </div>
           <div>
-            <p className="text-[10px] sm:text-xs text-zyvo-muted">Adresse</p>
-            <p className="text-xs sm:text-sm font-semibold text-white">Alger, Algérie</p>
+            <p className="text-[10px] sm:text-xs text-zyvo-muted">Ville</p>
+            <p className="text-xs sm:text-sm font-semibold text-white">{user?.city || 'Non renseignée'}</p>
           </div>
         </div>
       </div>

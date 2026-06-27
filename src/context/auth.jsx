@@ -16,10 +16,17 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
-  const login = (phone, name, role = 'client') => {
-    const u = { phone, name: name || 'Utilisateur', role }
+  const saveUser = (u) => {
     setUser(u)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
+  }
+
+  const login = (email, name) => {
+    saveUser({ email, name: name || 'Utilisateur', role: 'client' })
+  }
+
+  const register = ({ name, phone, email, city }) => {
+    saveUser({ name, phone, email: email || '', city: city || '', role: 'client' })
   }
 
   const logout = () => {
@@ -29,13 +36,11 @@ export function AuthProvider({ children }) {
 
   const switchRole = (role) => {
     if (!user) return
-    const u = { ...user, role }
-    setUser(u)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
+    saveUser({ ...user, role })
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, switchRole }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, switchRole }}>
       {children}
     </AuthContext.Provider>
   )
