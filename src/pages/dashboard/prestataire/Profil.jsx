@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useOutletContext, Link } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  User, ShieldCheck, MapPin, Star, Clock, DollarSign, Upload,
+  ShieldCheck, MapPin, Star, Clock, DollarSign, Upload,
   ChevronRight, LogOut, Camera, CheckCircle, AlertCircle, Edit3, Save
 } from 'lucide-react'
 import { useAuth } from '../../../context/auth'
@@ -121,21 +121,6 @@ export default function ProviderProfil() {
 
       {/* Actions */}
       <div className="space-y-2">
-        <Link
-          to="/dashboard/client"
-          className="flex items-center justify-between w-full glass-premium rounded-2xl p-4 card-hover"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center">
-              <User className="w-4 h-4 text-zyvo-gold" />
-            </div>
-            <div className="text-left">
-              <p className="font-bold text-sm text-white">Mode client</p>
-              <p className="text-[10px] text-zyvo-muted">Voir le dashboard client</p>
-            </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-zyvo-muted" />
-        </Link>
         <button
           onClick={() => { logout() }}
           className="flex items-center justify-between w-full glass-premium rounded-2xl p-4 card-hover"
