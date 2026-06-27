@@ -1,31 +1,34 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Outlet, NavLink, useNavigate, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
-  LayoutDashboard, Search, Heart, Calendar, Star, MessageCircle, User, LogOut, Menu, X, ChevronLeft
+  LayoutDashboard, Search, Heart, Calendar, Star, MessageCircle, User, LogOut, Menu, X
 } from 'lucide-react'
 import { useAuth } from '../../context/auth'
+import { useFavorites } from '../../context/favorites'
+import { useBookings } from '../../context/booking'
+import { chatMessages } from '../../data/dashboardData'
 import Logo from '../Logo'
 
 const navItems = [
-  { to: '/dashboard/client', icon: LayoutDashboard, label: 'Accueil', end: true },
-  { to: '/dashboard/client/explorer', icon: Search, label: 'Explorer' },
-  { to: '/dashboard/client/favoris', icon: Heart, label: 'Favoris' },
-  { to: '/dashboard/client/reservations', icon: Calendar, label: 'Réservations' },
-  { to: '/dashboard/client/avis', icon: Star, label: 'Mes Avis' },
-  { to: '/dashboard/client/messages', icon: MessageCircle, label: 'Messages' },
-  { to: '/dashboard/client/profil', icon: User, label: 'Profil' },
+  { to: '/dashboard/client', icon: LayoutDashboard, label: 'Accueil', end: true, badgeKey: null },
+  { to: '/dashboard/client/explorer', icon: Search, label: 'Explorer', badgeKey: null },
+  { to: '/dashboard/client/favoris', icon: Heart, label: 'Favoris', badgeKey: 'favorites' },
+  { to: '/dashboard/client/reservations', icon: Calendar, label: 'Réservations', badgeKey: 'bookings' },
+  { to: '/dashboard/client/avis', icon: Star, label: 'Mes Avis', badgeKey: null },
+  { to: '/dashboard/client/messages', icon: MessageCircle, label: 'Messages', badgeKey: 'messages' },
+  { to: '/dashboard/client/profil', icon: User, label: 'Profil', badgeKey: null },
 ]
 
 const bottomNavItems = [
-  { to: '/dashboard/client', icon: LayoutDashboard, label: 'Accueil', end: true },
-  { to: '/dashboard/client/explorer', icon: Search, label: 'Explorer' },
-  { to: '/dashboard/client/favoris', icon: Heart, label: 'Favoris' },
-  { to: '/dashboard/client/messages', icon: MessageCircle, label: 'Messages' },
-  { to: '/dashboard/client/profil', icon: User, label: 'Profil' },
+  { to: '/dashboard/client', icon: LayoutDashboard, label: 'Accueil', end: true, badgeKey: null },
+  { to: '/dashboard/client/explorer', icon: Search, label: 'Explorer', badgeKey: null },
+  { to: '/dashboard/client/favoris', icon: Heart, label: 'Favoris', badgeKey: 'favorites' },
+  { to: '/dashboard/client/messages', icon: MessageCircle, label: 'Messages', badgeKey: 'messages' },
+  { to: '/dashboard/client/profil', icon: User, label: 'Profil', badgeKey: null },
 ]
 
-function Sidebar({ open, onClose }) {
+function Sidebar({ open, onClose, badgeCounts }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -41,24 +44,28 @@ function Sidebar({ open, onClose }) {
         </div>
 
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          {navItems.map(({ to, icon: Icon, label, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                  isActive
-                    ? 'bg-gradient-to-r from-zyvo-gold/20 to-transparent text-zyvo-gold border-l-2 border-zyvo-gold'
-                    : 'text-zyvo-muted hover:text-white hover:bg-white/5'
-                }`
-              }
-            >
-              <Icon className="w-5 h-5" strokeWidth={1.5} />
-              {label}
-            </NavLink>
-          ))}
+          {navItems.map(({ to, icon: Icon, label, end, badgeKey }) => {
+            const count = badgeCounts[badgeKey] || 0
+            return (
+              <NavLink key={to} to={to} end={end} onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? 'bg-gradient-to-r from-zyvo-gold/20 to-transparent text-zyvo-gold border-l-2 border-zyvo-gold'
+                      : 'text-zyvo-muted hover:text-white hover:bg-white/5'
+                  }`
+                }
+              >
+                <Icon className="w-5 h-5" strokeWidth={1.5} />
+                <span className="flex-1">{label}</span>
+                {count > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-zyvo-gold text-[9px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg">
+                    {count > 9 ? '9+' : count}
+                  </span>
+                )}
+              </NavLink>
+            )
+          })}
         </nav>
 
         <div className="p-4 border-t border-white/5 space-y-2">
@@ -89,11 +96,19 @@ function Sidebar({ open, onClose }) {
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { user } = useAuth()
+  const { favorites } = useFavorites()
+  const { bookings } = useBookings()
   const location = useLocation()
+
+  const badgeCounts = useMemo(() => ({
+    favorites: favorites.length,
+    bookings: bookings.filter(b => b.status === 'En attente' || b.status === 'Confirmée').length,
+    messages: chatMessages.filter(c => c.unread > 0).length,
+  }), [favorites, bookings])
 
   return (
     <div className="min-h-screen bg-zyvo-dark">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} badgeCounts={badgeCounts} />
 
       {/* Mobile header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-30 glass-premium border-b border-white/5">
@@ -133,16 +148,26 @@ export default function DashboardLayout() {
       {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-premium border-t border-white/5 pb-[env(safe-area-inset-bottom,0px)]">
         <div className="flex justify-around items-center h-16 px-2">
-          {bottomNavItems.map(({ to, icon: Icon, label, end }) => (
-            <NavLink key={to} to={to} end={end} className="relative">
-              {({ isActive }) => (
-                <div className={`flex flex-col items-center gap-0.5 transition-all px-2 ${isActive ? 'text-zyvo-gold' : 'text-zyvo-muted'}`}>
-                  <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.5} />
-                  <span className="text-[9px] font-semibold whitespace-nowrap">{label}</span>
-                </div>
-              )}
-            </NavLink>
-          ))}
+          {bottomNavItems.map(({ to, icon: Icon, label, end, badgeKey }) => {
+            const count = badgeCounts[badgeKey] || 0
+            return (
+              <NavLink key={to} to={to} end={end} className="relative">
+                {({ isActive }) => (
+                  <div className={`flex flex-col items-center gap-0.5 transition-all px-2 ${isActive ? 'text-zyvo-gold' : 'text-zyvo-muted'}`}>
+                    <div className="relative">
+                      <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.5} />
+                      {count > 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-zyvo-gold text-[8px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg">
+                          {count > 9 ? '9+' : count}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[9px] font-semibold whitespace-nowrap">{label}</span>
+                  </div>
+                )}
+              </NavLink>
+            )
+          })}
         </div>
       </nav>
     </div>

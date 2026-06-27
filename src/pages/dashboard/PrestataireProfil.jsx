@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { 
   Star, Heart, MapPin, ShieldCheck, ChevronLeft, MessageCircle, 
@@ -7,11 +7,15 @@ import {
 } from 'lucide-react'
 import { useFavorites } from '../../context/favorites'
 import { extendedProviders, reviews, userReviews } from '../../data/dashboardData'
+import BookingModal from '../../components/dashboard/BookingModal'
+import { useRecentlyViewed } from '../../hooks/useRecentlyViewed'
 
 export default function PrestataireProfil() {
   const { id } = useParams()
   const provider = extendedProviders.find(p => p.id === Number(id))
   const { isFavorite, toggleFavorite } = useFavorites()
+  const { addView } = useRecentlyViewed()
+  const [showBooking, setShowBooking] = useState(false)
   const [newRating, setNewRating] = useState(0)
   const [newComment, setNewComment] = useState('')
   const [hoverRating, setHoverRating] = useState(0)
@@ -23,6 +27,8 @@ export default function PrestataireProfil() {
   )
 
   const myReviewForThis = userReviews.find(r => r.providerId === Number(id))
+
+  useEffect(() => { if (provider) addView(provider) }, [provider])
 
   if (!provider) {
     return (
@@ -88,7 +94,7 @@ export default function PrestataireProfil() {
           <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${fav ? 'fill-pink-400' : ''}`} strokeWidth={1.5} />
           {fav ? 'Favori' : 'Ajouter aux favoris'}
         </button>
-        <button className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-zyvo-gold/20 text-zyvo-gold border border-zyvo-gold/30 text-xs sm:text-sm font-bold hover:bg-zyvo-gold/30 transition-all">
+        <button onClick={() => setShowBooking(true)} className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-zyvo-gold/20 text-zyvo-gold border border-zyvo-gold/30 text-xs sm:text-sm font-bold hover:bg-zyvo-gold/30 transition-all">
           <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           Réserver
         </button>
@@ -271,6 +277,7 @@ export default function PrestataireProfil() {
           ))}
         </div>
       </div>
+      <BookingModal provider={provider} open={showBooking} onClose={() => setShowBooking(false)} />
     </div>
   )
 }

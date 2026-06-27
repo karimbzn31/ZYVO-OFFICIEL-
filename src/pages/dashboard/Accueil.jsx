@@ -1,13 +1,12 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { 
   Search, MapPin, Star, Heart, Clock, ArrowRight, TrendingUp, 
-  Users, Sparkles, ShieldCheck, ChevronRight, MessageCircle, 
-  Calendar, ThumbsUp
+  Users, Sparkles, ChevronRight, Calendar, History
 } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { useFavorites } from '../../context/favorites'
+import { useRecentlyViewed } from '../../hooks/useRecentlyViewed'
 import { extendedProviders, activityFeed, myBookings, recentSearches } from '../../data/dashboardData'
 
 function StatCard({ icon: Icon, label, value, gradient }) {
@@ -63,6 +62,7 @@ function ProviderCardSmall({ provider }) {
 export default function Accueil() {
   const { user } = useAuth()
   const { favorites } = useFavorites()
+  const { recent } = useRecentlyViewed()
   const [searchQuery, setSearchQuery] = useState('')
 
   const topProviders = useMemo(() => 
@@ -188,6 +188,37 @@ export default function Accueil() {
           ))}
         </div>
       </div>
+
+      {/* Recently Viewed */}
+      {recent.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <History className="w-4 h-4 sm:w-5 sm:h-5 text-zyvo-gold" />
+            <h2 className="font-extrabold text-base sm:text-lg">Récemment consultés</h2>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {recent.map(p => (
+              <Link key={p.id} to={`/dashboard/client/prestataire/${p.id}`} className="shrink-0 w-44 sm:w-48 glass-premium rounded-2xl p-3 card-hover group block">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${p.coverGradient || 'from-blue-500 to-cyan-400'} flex items-center justify-center text-xs font-bold text-white shadow-lg shrink-0`}>
+                    {p.name?.charAt(0) || '?'}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-bold text-xs text-white truncate group-hover:text-zyvo-gold transition-colors">{p.name}</p>
+                    <p className="text-[9px] text-zyvo-muted truncate">{p.service}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-[9px]">
+                  <span className="flex items-center gap-0.5 text-amber-400 font-bold">
+                    <Star className="w-2.5 h-2.5 fill-amber-400" />{p.rating || '-'}
+                  </span>
+                  <span className="text-zyvo-muted ml-auto font-bold">{p.price || ''}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Activity Feed */}
       <div>
