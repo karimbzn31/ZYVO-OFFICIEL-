@@ -324,6 +324,7 @@ body {
 .tilt-card-inner {
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   transform: rotateX(var(--rot-x, 0deg)) rotateY(var(--rot-y, 0deg));
+  height: 100%;
 }
 
 /* ===== GRADIENTS ===== */

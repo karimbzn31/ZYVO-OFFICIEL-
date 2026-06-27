@@ -153,6 +153,10 @@ export default function Home() {
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 })
   const [faqTab, setFaqTab] = useState('client')
   const [howTab, setHowTab] = useState('client')
+  const carouselRef = useRef(null)
+  const [carouselPaused, setCarouselPaused] = useState(false)
+  const [activeServiceIdx, setActiveServiceIdx] = useState(0)
+  const activeIdxRef = useRef(0)
 
   const [wlName, setWlName] = useState('')
   const [wlEmail, setWlEmail] = useState('')
@@ -183,6 +187,43 @@ export default function Home() {
     }, { threshold: 0.1 })
     document.querySelectorAll('[data-section]').forEach(el => observer.observe(el))
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    activeIdxRef.current = activeServiceIdx
+  }, [activeServiceIdx])
+
+  useEffect(() => {
+    if (carouselPaused) return
+    const timer = setInterval(() => {
+      const el = carouselRef.current
+      if (!el) return
+      const cards = el.querySelectorAll('[data-svc-card]')
+      if (!cards.length) return
+      const w = cards[0].offsetWidth + 12
+      const next = (activeIdxRef.current + 1) % services.length
+      el.scrollTo({ left: next * w, behavior: 'smooth' })
+      setActiveServiceIdx(next)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [carouselPaused])
+
+  const handleCarouselScroll = useCallback(() => {
+    const el = carouselRef.current
+    if (!el) return
+    const card = el.querySelector('[data-svc-card]')
+    if (!card) return
+    const idx = Math.round(el.scrollLeft / (card.offsetWidth + 12))
+    setActiveServiceIdx(Math.min(idx, services.length - 1))
+  }, [])
+
+  const scrollToService = useCallback((i) => {
+    const el = carouselRef.current
+    if (!el) return
+    const card = el.querySelector('[data-svc-card]')
+    if (!card) return
+    el.scrollTo({ left: i * (card.offsetWidth + 12), behavior: 'smooth' })
+    setActiveServiceIdx(i)
   }, [])
 
   const handleWlSubmit = (e) => {
@@ -277,26 +318,51 @@ export default function Home() {
             </div>
           </div>
 
-          {/* SERVICE CARDS - Horizontal Scroll */}
+          {/* SERVICE CARDS — Auto-scroll Carousel */}
           <div data-section="services" className={`mt-6 sm:mt-10 ${visible.hero ? 'animate-fade-in-up animate-delay-200' : 'opacity-0'}`}>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide sm:grid sm:grid-cols-4">
-              {services.map((s, i) => (
-                <TiltCard key={s.title}>
-                  <Link
-                    to="/search"
-                    className="group relative overflow-hidden glass-premium rounded-2xl p-4 sm:p-5 card-hover block w-44 sm:w-auto shrink-0 sm:shrink"
-                    style={{ animationDelay: `${i * 0.06}s` }}
-                  >
-                    <div className={`absolute -top-8 -right-8 w-20 h-20 bg-gradient-to-br ${s.gradient} rounded-full blur-2xl opacity-10 group-hover:opacity-25 transition-opacity`} />
-                    <div className="relative z-10">
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${s.bg} flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
-                        <s.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={1.5} />
+            <div
+              ref={carouselRef}
+              className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory sm:grid sm:grid-cols-4"
+              onScroll={handleCarouselScroll}
+              onMouseEnter={() => setCarouselPaused(true)}
+              onMouseLeave={() => setCarouselPaused(false)}
+              onTouchStart={() => setCarouselPaused(true)}
+              onTouchEnd={() => setTimeout(() => setCarouselPaused(false), 4000)}
+            >
+              {services.map((s) => (
+                <div key={s.title} className="snap-start shrink-0 w-44 h-[235px] sm:h-auto sm:w-auto" data-svc-card>
+                  <TiltCard className="h-full">
+                    <Link
+                      to="/search"
+                      className="group relative overflow-hidden glass-premium rounded-2xl p-4 sm:p-5 card-hover block h-full flex flex-col"
+                    >
+                      <div className={`absolute -top-8 -right-8 w-20 h-20 bg-gradient-to-br ${s.gradient} rounded-full blur-2xl opacity-10 group-hover:opacity-25 transition-opacity`} />
+                      <div className="relative z-10 flex flex-col h-full">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${s.bg} flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform shrink-0`}>
+                          <s.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={1.5} />
+                        </div>
+                        <h3 className="font-bold text-sm sm:text-base text-white leading-tight min-h-[2.5rem]">{s.title}</h3>
+                        <p className="text-xs text-zyvo-muted leading-relaxed mt-1 line-clamp-2 flex-1">{s.desc}</p>
                       </div>
-                      <h3 className="font-bold text-sm sm:text-base text-white leading-tight">{s.title}</h3>
-                      <p className="text-xs text-zyvo-muted leading-relaxed mt-1 line-clamp-2">{s.desc}</p>
-                    </div>
-                  </Link>
-                </TiltCard>
+                    </Link>
+                  </TiltCard>
+                </div>
+              ))}
+            </div>
+
+            {/* Dots indicator (mobile only) */}
+            <div className="flex items-center justify-center gap-2 mt-5 sm:hidden">
+              {services.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollToService(i)}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                    i === activeServiceIdx
+                      ? 'w-6 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-400 shadow-lg shadow-purple-500/25'
+                      : 'w-1.5 bg-white/20 hover:bg-white/40'
+                  }`}
+                  aria-label={`Service ${i + 1}`}
+                />
               ))}
             </div>
           </div>
