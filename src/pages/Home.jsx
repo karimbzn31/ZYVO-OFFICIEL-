@@ -204,7 +204,7 @@ export default function Home() {
       const next = (activeIdxRef.current + 1) % services.length
       el.scrollTo({ left: next * w, behavior: 'smooth' })
       setActiveServiceIdx(next)
-    }, 4000)
+    }, 2500)
     return () => clearInterval(timer)
   }, [carouselPaused])
 
