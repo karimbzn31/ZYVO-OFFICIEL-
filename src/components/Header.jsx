@@ -34,11 +34,11 @@ function NotificationBell() {
   return (
     <button
       onClick={() => setShowPanel(true)}
-      className="relative p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+      className="relative p-1.5 sm:p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
     >
-      <Bell className="w-4 h-4" />
+      <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
       {unreadCount > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-zyvo-gold text-[9px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg">
+        <span className="absolute -top-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-zyvo-gold text-[7px] sm:text-[9px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg">
           {unreadCount > 9 ? '9+' : unreadCount}
         </span>
       )}
@@ -80,19 +80,21 @@ export default function Header() {
               ))}
             </nav>
 
-            <div className="flex items-center gap-1 sm:gap-2">
-              <ThemeToggle />
+            <div className="flex items-center gap-0.5 sm:gap-2">
+              <div className="hidden md:block">
+                <ThemeToggle />
+              </div>
               <Link
                 to="/messages"
-                className="hidden sm:flex p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
+                className="hidden sm:flex p-1.5 sm:p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
               >
-                <MessageCircle className="w-4 h-4" />
+                <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </Link>
               <NotificationBell />
               {user ? (
                 <Link
                   to="/profile"
-                  className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center text-xs font-bold text-white shadow-lg"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl gradient-primary flex items-center justify-center text-[10px] sm:text-xs font-bold text-white shadow-lg"
                 >
                   {user.name.charAt(0)}
                 </Link>
@@ -100,13 +102,13 @@ export default function Header() {
                 <div className="flex items-center gap-1 sm:gap-2">
                   <Link
                     to="/auth"
-                    className="text-sm font-semibold text-zyvo-muted hover:text-white transition-colors px-3 py-2"
+                    className="text-[11px] sm:text-sm font-semibold text-zyvo-muted hover:text-white transition-colors px-1.5 sm:px-3 py-1.5 sm:py-2"
                   >
                     Connexion
                   </Link>
                   <button
                     onClick={() => setShowRoleModal(true)}
-                    className="gradient-brand text-white text-sm font-bold px-5 py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm"
+                    className="gradient-brand text-white text-[11px] sm:text-sm font-bold px-3 sm:px-5 py-1.5 sm:py-2 rounded-xl gradient-glow-warm hover:scale-105 transition-all duration-300 glow-worm whitespace-nowrap"
                   >
                     S'inscrire
                   </button>

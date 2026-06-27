@@ -51,7 +51,7 @@ export default function Logo({ showText = true, logoSize = 'sm' }) {
       {showText && (
         <div className="flex flex-col leading-none">
           <span className={`${s.text} font-extrabold gradient-text-brand leading-tight`}>Zyvo</span>
-          <span className="text-[7px] sm:text-[8px] font-semibold text-zyvo-muted tracking-[0.2em] uppercase leading-tight">
+          <span className="hidden sm:block text-[7px] sm:text-[8px] font-semibold text-zyvo-muted tracking-[0.2em] uppercase leading-tight">
             Le bon pro
           </span>
         </div>
