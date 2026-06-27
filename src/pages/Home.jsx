@@ -277,21 +277,26 @@ export default function Home() {
             </div>
           </div>
 
-          {/* SERVICE CARDS */}
-          <div className={`mt-4 sm:mt-10 ${visible.hero ? 'animate-fade-in-up animate-delay-200' : 'opacity-0'}`}>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-              {services.slice(0, 6).map((s) => (
-                <Link
-                  key={s.title}
-                  to="/search"
-                  className={`glass-premium rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center card-hover group border border-transparent hover:border-white/10 ${s.bg}`}
-                >
-                  <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center mx-auto mb-1.5 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform`}>
-                    <s.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="font-bold text-xs sm:text-sm text-white leading-tight">{s.title.split(' ')[0]}</h3>
-                  <p className="text-[8px] sm:text-xs text-zyvo-muted mt-0.5 hidden sm:block">{s.desc.split('.')[0]}</p>
-                </Link>
+          {/* SERVICE CARDS - Horizontal Scroll */}
+          <div data-section="services" className={`mt-6 sm:mt-10 ${visible.hero ? 'animate-fade-in-up animate-delay-200' : 'opacity-0'}`}>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide sm:grid sm:grid-cols-4">
+              {services.map((s, i) => (
+                <TiltCard key={s.title}>
+                  <Link
+                    to="/search"
+                    className="group relative overflow-hidden glass-premium rounded-2xl p-4 sm:p-5 card-hover block w-44 sm:w-auto shrink-0 sm:shrink"
+                    style={{ animationDelay: `${i * 0.06}s` }}
+                  >
+                    <div className={`absolute -top-8 -right-8 w-20 h-20 bg-gradient-to-br ${s.gradient} rounded-full blur-2xl opacity-10 group-hover:opacity-25 transition-opacity`} />
+                    <div className="relative z-10">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${s.bg} flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
+                        <s.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={1.5} />
+                      </div>
+                      <h3 className="font-bold text-sm sm:text-base text-white leading-tight">{s.title}</h3>
+                      <p className="text-xs text-zyvo-muted leading-relaxed mt-1 line-clamp-2">{s.desc}</p>
+                    </div>
+                  </Link>
+                </TiltCard>
               ))}
             </div>
           </div>
@@ -582,43 +587,6 @@ export default function Home() {
         <p className="text-xs text-zyvo-muted mt-3 flex items-center gap-1">
           <MapPin className="w-3 h-3" /> D'autres villes arrivent bientôt
         </p>
-      </section>
-
-      {/* ===== SERVICES ===== */}
-      <section data-section="services" className="py-16">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className={`text-3xl sm:text-4xl font-extrabold ${visible.services ? 'animate-fade-in-up' : 'opacity-0'}`}>
-              Services <span className="gradient-text">premium</span>
-            </h2>
-            <p className={`text-zyvo-muted mt-2 ${visible.services ? 'animate-fade-in-up animate-delay-100' : 'opacity-0'}`}>
-              Des professionnels vérifiés pour chaque besoin du quotidien
-            </p>
-          </div>
-          <Link to="/search" className="hidden sm:flex items-center gap-1 text-sm text-zyvo-gold hover:underline">
-            Voir tout <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-fade">
-          {services.map((s, i) => (
-            <TiltCard key={s.title}>
-              <Link to="/search" className="group relative overflow-hidden glass-premium rounded-2xl p-6 card-hover block" style={{ animationDelay: `${i * 0.08}s` }}>
-                <div className={`absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br ${s.gradient} rounded-full blur-2xl opacity-10 group-hover:opacity-25 transition-opacity`} />
-                <div className="relative z-10">
-                  <div className={`w-12 h-12 rounded-xl ${s.bg} flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform`}>
-                    <s.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="font-bold text-base mb-1.5 text-white">{s.title}</h3>
-                  <p className="text-sm text-zyvo-muted leading-relaxed">{s.desc}</p>
-                  <div className="mt-4 flex items-center gap-1 text-xs text-zyvo-gold opacity-0 group-hover:opacity-100 transition-opacity">
-                    Découvrir <ArrowRight className="w-3 h-3" />
-                  </div>
-                </div>
-              </Link>
-            </TiltCard>
-          ))}
-        </div>
       </section>
 
       {/* ===== STATS ===== */}
