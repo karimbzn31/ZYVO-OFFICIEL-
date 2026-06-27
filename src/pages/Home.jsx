@@ -243,18 +243,17 @@ export default function Home() {
             </h1>
 
             <p className="text-xs sm:text-lg text-zyvo-muted mt-2 sm:mt-4 max-w-xl mx-auto sm:mx-0 leading-relaxed">
-              Plomberie, ménage, cours, coiffure, santé… trouvez le prestataire
-              vérifié qu'il vous faut, près de chez vous.
+              Services locaux & digitaux — trouvez le prestataire vérifié qu'il vous faut.
             </p>
 
-            <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 mt-4 sm:mt-6">
+            <div className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-3 mt-5 sm:mt-6">
               <Link to="/search"
-                className="group gradient-brand text-white font-bold px-5 sm:px-8 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:scale-105 transition-all glow-worm inline-flex items-center gap-2 text-xs sm:text-base"
+                className="group gradient-brand text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:scale-105 transition-all glow-worm inline-flex items-center gap-2 text-sm sm:text-base"
               >
-                Trouver un service <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                Trouver un service <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link to="/become-provider"
-                className="glass-premium-light text-white font-bold px-5 sm:px-8 py-2.5 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-white/10 hover:scale-105 transition-all text-xs sm:text-base"
+                className="glass-premium-light text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-white/10 hover:scale-105 transition-all text-sm sm:text-base"
               >
                 Devenir prestataire
               </Link>
@@ -280,17 +279,17 @@ export default function Home() {
 
           {/* SERVICE CARDS */}
           <div className={`mt-4 sm:mt-10 ${visible.hero ? 'animate-fade-in-up animate-delay-200' : 'opacity-0'}`}>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1.5 sm:gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
               {services.slice(0, 6).map((s) => (
                 <Link
                   key={s.title}
                   to="/search"
-                  className={`glass-premium rounded-xl sm:rounded-2xl p-2 sm:p-5 text-center card-hover group border border-transparent hover:border-white/10 ${s.bg}`}
+                  className={`glass-premium rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center card-hover group border border-transparent hover:border-white/10 ${s.bg}`}
                 >
-                  <div className={`w-9 h-9 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center mx-auto mb-1 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform`}>
-                    <s.icon className="w-4 h-4 sm:w-7 sm:h-7 text-white" strokeWidth={1.5} />
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center mx-auto mb-1.5 sm:mb-3 shadow-lg group-hover:scale-110 transition-transform`}>
+                    <s.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-bold text-[10px] sm:text-sm text-white leading-tight">{s.title.split(' ')[0]}</h3>
+                  <h3 className="font-bold text-xs sm:text-sm text-white leading-tight">{s.title.split(' ')[0]}</h3>
                   <p className="text-[8px] sm:text-xs text-zyvo-muted mt-0.5 hidden sm:block">{s.desc.split('.')[0]}</p>
                 </Link>
               ))}

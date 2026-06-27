@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 
 const meta = {
-  '/': { title: 'Zyvo — Le bon pro, près de chez vous', description: 'Trouvez des prestataires vérifiés en Algérie. Plomberie, ménage, cours, coiffure et plus. Réservez en un clic.' },
+  '/': { title: 'Zyvo — Le bon pro, près de chez vous', description: 'Services locaux & digitaux — trouvez le prestataire vérifié qu\'il vous faut. Plomberie, ménage, cours, coiffure, développement web et plus.' },
   '/search': { title: 'Rechercher un service — Zyvo', description: 'Trouvez le prestataire idéal près de chez vous. Filtrez par ville, prix, note et catégorie.' },
   '/bookings': { title: 'Mes réservations — Zyvo', description: 'Consultez et gérez toutes vos réservations de services.' },
   '/favorites': { title: 'Mes favoris — Zyvo', description: 'Retrouvez vos prestataires favoris en un clin d\'oeil.' },
