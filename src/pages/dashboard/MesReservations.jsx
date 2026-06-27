@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Calendar, MapPin, Clock, ChevronRight, XCircle, 
-  CheckCircle, AlertCircle
+  CheckCircle, AlertCircle, MessageCircle, Star
 } from 'lucide-react'
 import { useLoading } from '../../hooks/useLoading'
 import { ListSkeleton } from '../../components/dashboard/Skeleton'
