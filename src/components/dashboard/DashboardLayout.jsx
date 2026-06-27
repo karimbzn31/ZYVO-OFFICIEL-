@@ -124,15 +124,10 @@ export default function DashboardLayout() {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <Link to="/dashboard/client" className="flex items-center gap-2">
-            <span className="text-sm font-bold gradient-text-brand">Zyvo</span>
+          <Link to="/dashboard/client">
+            <Logo />
           </Link>
-          <NavLink
-            to="/dashboard/client/profil"
-            className="w-8 h-8 rounded-xl gradient-brand flex items-center justify-center text-xs font-bold text-white shadow-lg"
-          >
-            {user?.name?.charAt(0) || 'U'}
-          </NavLink>
+          <div className="w-8" />
         </div>
       </div>
 
