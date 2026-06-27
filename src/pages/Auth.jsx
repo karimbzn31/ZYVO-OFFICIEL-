@@ -73,8 +73,9 @@ export default function Auth() {
 
   const handleRegister = (e) => {
     e.preventDefault()
-    if (!name.trim() || !phone.trim() || !city) return
-    register({ name: name.trim(), phone, email, city, role: selectedRole || 'client' })
+    if (!name.trim() || !phone.trim()) return
+    if (selectedRole !== 'prestataire' && !city) return
+    register({ name: name.trim(), phone, email, city: city || '', role: selectedRole || 'client' })
     navigate(getRedirect())
   }
 
@@ -264,6 +265,43 @@ export default function Auth() {
             </button>
           </form>
         )
+      ) : selectedRole === 'prestataire' ? (
+        <form onSubmit={handleRegister} className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Nom complet</label>
+            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+              <User className="w-4 h-4 text-zyvo-muted shrink-0" />
+              <input
+                type="text"
+                placeholder="Votre nom et prénom"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Numéro de téléphone</label>
+            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+              <Phone className="w-4 h-4 text-zyvo-muted shrink-0" />
+              <input
+                type="tel"
+                placeholder="05 55 XX XX XX"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+                required
+              />
+            </div>
+          </div>
+          <p className="text-xs text-zyvo-muted/60 text-center">
+            Vous pourrez compléter votre profil après l'inscription
+          </p>
+          <button type="submit" className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] transition-all duration-300 glow-worm flex items-center justify-center gap-2">
+            S'inscrire <ArrowRight className="w-4 h-4" />
+          </button>
+        </form>
       ) : (
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
