@@ -88,7 +88,7 @@ export default function Profile() {
       {/* ROLE SWITCHER */}
       {user.role === 'prestataire' ? (
         <Link
-          to="/provider/dashboard"
+          to="/dashboard/prestataire"
           className="flex items-center gap-3 glass-premium rounded-2xl p-4 mb-4 card-hover"
         >
           <div className="w-10 h-10 rounded-xl bg-zyvo-gold/10 flex items-center justify-center">

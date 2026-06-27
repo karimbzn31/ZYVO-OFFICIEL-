@@ -51,7 +51,7 @@ export default function Header() {
             <div className="flex items-center gap-0.5 sm:gap-2">
               {user ? (
                 <Link
-                  to={user.role === 'prestataire' ? '/provider/dashboard' : '/dashboard/client'}
+                  to={user.role === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client'}
                   className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl gradient-primary flex items-center justify-center text-[10px] sm:text-xs font-bold text-white shadow-lg"
                 >
                   {user.name.charAt(0)}

@@ -60,6 +60,14 @@ const DashboardNotifications = lazy(() => import('./pages/dashboard/Notification
 const DashboardDemanderDevis = lazy(() => import('./pages/dashboard/DemanderDevis'))
 const DashboardMesDevis = lazy(() => import('./pages/dashboard/MesDevis'))
 const DashboardPrestataireProfil = lazy(() => import('./pages/dashboard/PrestataireProfil'))
+const ProviderLayout = lazy(() => import('./components/dashboard/ProviderLayout'))
+const ProviderAccueil = lazy(() => import('./pages/dashboard/prestataire/Accueil'))
+const ProviderDemandes = lazy(() => import('./pages/dashboard/prestataire/Demandes'))
+const ProviderServices = lazy(() => import('./pages/dashboard/prestataire/Services'))
+const ProviderCalendrier = lazy(() => import('./pages/dashboard/prestataire/Calendrier'))
+const ProviderRevenus = lazy(() => import('./pages/dashboard/prestataire/Revenus'))
+const ProviderAvis = lazy(() => import('./pages/dashboard/prestataire/Avis'))
+const ProviderProfil = lazy(() => import('./pages/dashboard/prestataire/Profil'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -147,6 +155,17 @@ function AppContent() {
                   <Route path="notifications" element={<DashboardNotifications />} />
                   <Route path="demander-devis" element={<DashboardDemanderDevis />} />
                   <Route path="mes-devis" element={<DashboardMesDevis />} />
+                </Route>
+                {/* Provider Dashboard */}
+                <Route path="/dashboard/prestataire" element={<ProviderLayout />}>
+                  <Route index element={<ProviderAccueil />} />
+                  <Route path="demandes" element={<ProviderDemandes />} />
+                  <Route path="services" element={<ProviderServices />} />
+                  <Route path="calendrier" element={<ProviderCalendrier />} />
+                  <Route path="messages" element={<DashboardMessagerie />} />
+                  <Route path="revenus" element={<ProviderRevenus />} />
+                  <Route path="avis" element={<ProviderAvis />} />
+                  <Route path="profil" element={<ProviderProfil />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
