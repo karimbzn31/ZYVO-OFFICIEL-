@@ -232,7 +232,7 @@ export default function Accueil() {
 
   const stats = useMemo(() => [
     { icon: FileText, label: 'Devis en cours', value: quotes.filter(q => q.status === 'pending' || q.status === 'answered').length, gradient: 'from-blue-500 to-cyan-400', delay: 0.05 },
-    { icon: Calendar, label: 'R\xe0 venir', value: bookings.filter(b => b.status === 'Confirmée' || b.status === 'En attente').length, gradient: 'from-emerald-500 to-teal-400', delay: 0.1 },
+    { icon: Calendar, label: 'À venir', value: bookings.filter(b => b.status === 'Confirmée' || b.status === 'En attente').length, gradient: 'from-emerald-500 to-teal-400', delay: 0.1 },
     { icon: Heart, label: 'Favoris', value: favorites.length, gradient: 'from-pink-500 to-rose-400', delay: 0.15 },
     { icon: Star, label: 'Note moyenne', value: '4.7', gradient: 'from-amber-500 to-orange-400', delay: 0.2 },
   ], [favorites.length, bookings])
@@ -252,7 +252,7 @@ export default function Accueil() {
   if (loading) return <SkeletonState />
 
   return (
-    <div className="space-y-5 sm:space-y-7">
+    <div className="space-y-5 sm:space-y-7 overflow-x-hidden">
       {/* ===== GREETING ===== */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -271,7 +271,7 @@ export default function Accueil() {
                   {unreadCount} notification{unreadCount > 1 ? 's' : ''} non lue{unreadCount > 1 ? 's' : ''}
                 </span>
               ) : (
-                'Pr\xeat \xe0 trouver le bon pro ?'
+                'Prêt à trouver le bon pro ?'
               )}
             </p>
           </div>
@@ -334,7 +334,7 @@ export default function Accueil() {
             title={nextBooking ? 'Prochaine réservation' : 'Mes derniers devis'}
             linkTo="/dashboard/client/reservations"
           />
-          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
+          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
             {nextBooking && <BookingCard booking={nextBooking} />}
             {recentQuotes.map(q => (
               <QuoteCard key={q.id} quote={q} />
@@ -354,7 +354,7 @@ export default function Accueil() {
           title="Prestataires recommandés"
           linkTo="/dashboard/client/explorer"
         />
-        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
+        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
           {topProviders.map(p => (
             <ProviderCardMini key={p.id} provider={p} />
           ))}
@@ -372,7 +372,7 @@ export default function Accueil() {
             icon={Heart}
             title="Récemment consultés"
           />
-          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
+          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
             {recent.map(p => (
               <ProviderCardMini key={p.id} provider={p} />
             ))}

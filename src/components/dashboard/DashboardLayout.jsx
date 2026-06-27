@@ -132,7 +132,7 @@ export default function DashboardLayout() {
       </div>
 
       {/* Main */}
-      <div className="lg:pl-64 pt-14 lg:pt-0 pb-20 lg:pb-0 min-h-screen">
+      <div className="lg:pl-64 pt-14 lg:pt-0 pb-20 lg:pb-0 min-h-screen overflow-x-hidden">
         <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
           <motion.div
             key={location.pathname}
