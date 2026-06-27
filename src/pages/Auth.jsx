@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, ShieldCheck, RefreshCw, Briefcase } from 'lucide-react'
 import { useAuth } from '../context/auth'
 import { useToast } from '../context/toast'
@@ -68,6 +68,17 @@ export default function Auth() {
   const { login, register } = useAuth()
   const { addToast } = useToast()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (selectedRole === 'prestataire') {
+      setMode('login')
+      setLoginStep('form')
+      setLoginCode('')
+      setCodeError('')
+    } else if (selectedRole === 'client') {
+      setMode('register')
+    }
+  }, [selectedRole])
 
   const getRedirect = () => selectedRole === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client'
 
@@ -265,43 +276,6 @@ export default function Auth() {
             </button>
           </form>
         )
-      ) : selectedRole === 'prestataire' ? (
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Nom complet</label>
-            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
-              <User className="w-4 h-4 text-zyvo-muted shrink-0" />
-              <input
-                type="text"
-                placeholder="Votre nom et prénom"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Numéro de téléphone</label>
-            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
-              <Phone className="w-4 h-4 text-zyvo-muted shrink-0" />
-              <input
-                type="tel"
-                placeholder="05 55 XX XX XX"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-                required
-              />
-            </div>
-          </div>
-          <p className="text-xs text-zyvo-muted/60 text-center">
-            Vous pourrez compléter votre profil après l'inscription
-          </p>
-          <button type="submit" className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] transition-all duration-300 glow-worm flex items-center justify-center gap-2">
-            S'inscrire <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
       ) : (
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
@@ -364,7 +338,13 @@ export default function Auth() {
 
       <div className="text-center mt-6">
         <p className="text-sm text-zyvo-muted">
-          {mode === 'login' ? (
+          {selectedRole === 'prestataire' ? (
+            <>Pas encore de compte prestataire ?{' '}
+              <Link to="/become-provider" className="text-zyvo-gold font-bold hover:underline">
+                Créer un compte
+              </Link>
+            </>
+          ) : mode === 'login' ? (
             <>Pas encore de compte ?{' '}
               <button type="button" onClick={() => { setMode('register'); setLoginStep('form'); setLoginCode(''); setCodeError('') }} className="text-zyvo-gold font-bold hover:underline">
                 Créer un compte
