@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Home, Search, Calendar, Heart, User, Moon, Sun, Bell, MessageCircle } from 'lucide-react'
+import { Home, Search, Calendar, Heart, User } from 'lucide-react'
 import { useAuth } from '../context/auth'
-import { useTheme } from '../context/theme'
-import { useNotifications } from '../context/notifications'
 import { useI18n } from '../i18n'
 import Logo from './Logo'
 import RoleModal from './RoleModal'
@@ -15,36 +13,6 @@ const navLinks = [
   { to: '/favorites', icon: Heart, label: 'nav.favorites' },
   { to: '/profile', icon: User, label: 'nav.profile' },
 ]
-
-function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme()
-  return (
-    <button
-      onClick={toggleTheme}
-      className="p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
-      title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
-    >
-      {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4 text-zyvo-gold" />}
-    </button>
-  )
-}
-
-function NotificationBell() {
-  const { unreadCount, setShowPanel } = useNotifications()
-  return (
-    <button
-      onClick={() => setShowPanel(true)}
-      className="relative p-1.5 sm:p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
-    >
-      <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-      {unreadCount > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-zyvo-gold text-[7px] sm:text-[9px] font-bold text-zyvo-dark flex items-center justify-center shadow-lg">
-          {unreadCount > 9 ? '9+' : unreadCount}
-        </span>
-      )}
-    </button>
-  )
-}
 
 export default function Header() {
   const { user } = useAuth()
@@ -81,16 +49,6 @@ export default function Header() {
             </nav>
 
             <div className="flex items-center gap-0.5 sm:gap-2">
-              <div className="hidden md:block">
-                <ThemeToggle />
-              </div>
-              <Link
-                to="/messages"
-                className="hidden sm:flex p-1.5 sm:p-2 rounded-xl text-zyvo-muted hover:text-white hover:bg-white/5 transition-all"
-              >
-                <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </Link>
-              <NotificationBell />
               {user ? (
                 <Link
                   to={user.role === 'prestataire' ? '/provider/dashboard' : '/dashboard/client'}
