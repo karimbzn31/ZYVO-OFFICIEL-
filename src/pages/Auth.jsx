@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, ShieldCheck, RefreshCw } from 'lucide-react'
+import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, ShieldCheck, RefreshCw, Briefcase } from 'lucide-react'
 import { useAuth } from '../context/auth'
 import { useToast } from '../context/toast'
 
@@ -54,6 +54,7 @@ function CitySelect({ value, onChange }) {
 
 export default function Auth() {
   const [mode, setMode] = useState('register')
+  const [selectedRole, setSelectedRole] = useState(null)
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
@@ -68,11 +69,13 @@ export default function Auth() {
   const { addToast } = useToast()
   const navigate = useNavigate()
 
+  const getRedirect = () => selectedRole === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client'
+
   const handleRegister = (e) => {
     e.preventDefault()
     if (!name.trim() || !phone.trim() || !city) return
-    register({ name: name.trim(), phone, email, city })
-    navigate('/dashboard/client')
+    register({ name: name.trim(), phone, email, city, role: selectedRole || 'client' })
+    navigate(getRedirect())
   }
 
   const handleSendCode = (e) => {
@@ -93,8 +96,8 @@ export default function Auth() {
       setCodeError('Code incorrect. Vérifiez le code reçu.')
       return
     }
-    login(loginPhone, loginName.trim())
-    navigate('/dashboard/client')
+    login(loginPhone, loginName.trim(), selectedRole || 'client')
+    navigate(getRedirect())
   }
 
   const codeInputs = useRef([])
@@ -112,6 +115,50 @@ export default function Auth() {
     if (e.key === 'Backspace' && !loginCode[i] && i > 0) codeInputs.current[i - 1]?.focus()
   }
 
+  if (!selectedRole) {
+    return (
+      <div className="py-8 max-w-sm mx-auto">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Sparkles className="w-7 h-7 text-white" />
+          </div>
+          <h1 className="text-2xl font-extrabold">Bienvenue sur Zyvo</h1>
+          <p className="text-sm text-zyvo-muted mt-1">Choisissez comment vous souhaitez utiliser Zyvo</p>
+        </div>
+
+        <div className="space-y-3">
+          <button
+            onClick={() => setSelectedRole('client')}
+            className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
+          >
+            <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg">
+              <User className="w-6 h-6 text-white" strokeWidth={1.5} />
+            </div>
+            <div className="flex-1">
+              <div className="font-bold text-white text-base">Client</div>
+              <div className="text-xs text-zyvo-muted mt-0.5">Je cherche un service près de chez moi</div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-zyvo-muted group-hover:text-zyvo-gold transition-colors" />
+          </button>
+
+          <button
+            onClick={() => setSelectedRole('prestataire')}
+            className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
+          >
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-600 to-orange-500 flex items-center justify-center shrink-0 shadow-lg">
+              <Briefcase className="w-6 h-6 text-white" strokeWidth={1.5} />
+            </div>
+            <div className="flex-1">
+              <div className="font-bold text-white text-base">Prestataire</div>
+              <div className="text-xs text-zyvo-muted mt-0.5">Je propose mes services aux clients</div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-zyvo-muted group-hover:text-zyvo-gold transition-colors" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="py-8 max-w-sm mx-auto">
       <div className="text-center mb-8">
@@ -124,9 +171,16 @@ export default function Auth() {
         </h1>
         <p className="text-sm text-zyvo-muted mt-1">
           {mode === 'login'
-            ? (loginStep === 'code' ? 'Entrez le code reçu par SMS' : 'Connectez-vous à votre compte Zyvo')
-            : 'Rejoignez le marché Zyvo'}
+            ? (loginStep === 'code' ? 'Entrez le code reçu par SMS' : `Connectez-vous en tant que ${selectedRole === 'prestataire' ? 'prestataire' : 'client'}`)
+            : `Rejoignez Zyvo en tant que ${selectedRole === 'prestataire' ? 'prestataire' : 'client'}`}
         </p>
+        <button
+          type="button"
+          onClick={() => { setSelectedRole(null); setLoginStep('form'); setLoginCode(''); setCodeError('') }}
+          className="text-xs text-zyvo-muted hover:text-white transition-colors mt-2 flex items-center justify-center gap-1 mx-auto"
+        >
+          <ChevronLeft className="w-3 h-3" /> Changer de rôle
+        </button>
       </div>
 
       {mode === 'login' ? (

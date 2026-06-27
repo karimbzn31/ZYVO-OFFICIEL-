@@ -21,12 +21,12 @@ export function AuthProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
   }
 
-  const login = (email, name) => {
-    saveUser({ email, name: name || 'Utilisateur', role: 'client' })
+  const login = (email, name, role = 'client') => {
+    saveUser({ email, name: name || 'Utilisateur', role })
   }
 
-  const register = ({ name, phone, email, city }) => {
-    saveUser({ name, phone, email: email || '', city: city || '', role: 'client' })
+  const register = ({ name, phone, email, city, role = 'client' }) => {
+    saveUser({ name, phone, email: email || '', city: city || '', role })
   }
 
   const logout = () => {
