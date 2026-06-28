@@ -69,14 +69,7 @@ export default function Auth() {
   const { addToast } = useToast()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (selectedRole === 'prestataire') {
-      setMode('login')
-    } else if (selectedRole === 'client') {
-      setMode('register')
-    }
-    setError('')
-  }, [selectedRole])
+
 
   const getRedirect = () => selectedRole === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client'
 
@@ -139,7 +132,7 @@ export default function Auth() {
 
         <div className="space-y-3">
           <button
-            onClick={() => setSelectedRole('client')}
+            onClick={() => { setSelectedRole('client'); setMode('register'); setError('') }}
             className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
           >
             <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg">
@@ -153,7 +146,7 @@ export default function Auth() {
           </button>
 
           <button
-            onClick={() => setSelectedRole('prestataire')}
+            onClick={() => { setSelectedRole('prestataire'); setMode('login'); setError('') }}
             className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
           >
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-600 to-orange-500 flex items-center justify-center shrink-0 shadow-lg">
