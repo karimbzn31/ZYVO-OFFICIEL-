@@ -65,9 +65,7 @@ export default function Auth() {
   const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [magicSent, setMagicSent] = useState(false)
-  const [registered, setRegistered] = useState(false)
-  const { login, register, sendMagicLink } = useAuth()
+  const { login, register } = useAuth()
   const { addToast } = useToast()
   const navigate = useNavigate()
 
@@ -100,9 +98,11 @@ export default function Auth() {
     setSubmitting(true)
     try {
       await register({ name: name.trim(), phone, email: email.trim(), city: city || '', role: selectedRole || 'client', password })
-      setRegistered(true)
+      addToast('Compte créé avec succès', { message: 'Bienvenue sur Zyvo !', type: 'success' })
+      navigate(getRedirect())
     } catch (err) {
       setError(err.message || 'Erreur lors de l\'inscription')
+    } finally {
       setSubmitting(false)
     }
   }
@@ -124,63 +124,6 @@ export default function Auth() {
     } finally {
       setSubmitting(false)
     }
-  }
-
-  const handleSendMagicLink = async () => {
-    setError('')
-    if (!loginEmail.trim()) {
-      setError('Veuillez entrer votre email')
-      return
-    }
-    setSubmitting(true)
-    try {
-      await sendMagicLink(loginEmail.trim())
-      setMagicSent(true)
-    } catch (err) {
-      setError(err.message || 'Erreur lors de l\'envoi du lien')
-      setSubmitting(false)
-    }
-  }
-
-  if (registered) {
-    return (
-      <div className="py-8 max-w-sm mx-auto text-center">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-          <Mail className="w-7 h-7 text-emerald-400" />
-        </div>
-        <h1 className="text-xl font-extrabold mb-2">Vérifie ta boîte email</h1>
-        <p className="text-sm text-zyvo-muted mb-6">
-          Un email de confirmation a été envoyé à <strong className="text-white">{email}</strong>.<br />
-          Clique sur le lien pour activer ton compte.
-        </p>
-        <button
-          onClick={() => { setRegistered(false); setMode('login') }}
-          className="text-sm text-zyvo-gold font-bold hover:underline"
-        >
-          Se connecter après confirmation
-        </button>
-      </div>
-    )
-  }
-
-  if (magicSent) {
-    return (
-      <div className="py-8 max-w-sm mx-auto text-center">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-          <Mail className="w-7 h-7 text-emerald-400" />
-        </div>
-        <h1 className="text-xl font-extrabold mb-2">Lien magique envoyé</h1>
-        <p className="text-sm text-zyvo-muted mb-6">
-          Vérifie ta boîte email <strong className="text-white">{loginEmail}</strong> et clique sur le lien pour te connecter.
-        </p>
-        <button
-          onClick={() => { setMagicSent(false); setSubmitting(false) }}
-          className="text-sm text-zyvo-gold font-bold hover:underline"
-        >
-          Réessayer avec un autre email
-        </button>
-      </div>
-    )
   }
 
   if (!selectedRole) {
@@ -298,23 +241,6 @@ export default function Auth() {
             className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100 transition-all duration-300 glow-worm flex items-center justify-center gap-2"
           >
             {submitting ? 'Connexion...' : 'Se connecter'} <ArrowRight className="w-4 h-4" />
-          </button>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-zyvo-dark px-3 text-[10px] text-zyvo-muted font-semibold">OU</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={handleSendMagicLink}
-            disabled={submitting}
-            className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2"
-          >
-            <Mail className="w-4 h-4" />
-            {submitting ? 'Envoi...' : 'Lien magique'}
           </button>
         </form>
       ) : (
