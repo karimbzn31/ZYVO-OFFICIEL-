@@ -12,6 +12,30 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          setUser(formatUser(session.user))
+        }
+      } catch (e) {
+        console.error('Auth init error:', e)
+      }
+      setLoading(false)
+    }
+    init()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(formatUser(session.user))
+      } else {
+        setUser(null)
+      }
+    })
+    return () => subscription?.unsubscribe()
+  }, [])
+
   function formatUser(supabaseUser) {
     return {
       id: supabaseUser.id,
@@ -22,41 +46,6 @@ export function AuthProvider({ children }) {
       role: supabaseUser.user_metadata?.role || 'client',
     }
   }
-
-  async function enrichFromProfile(fallback) {
-    if (!fallback?.id) return fallback
-    const { data } = await supabase.from('users').select('name, phone, city, role').eq('id', fallback.id).maybeSingle()
-    if (data) {
-      return { ...fallback, name: data.name || fallback.name, phone: data.phone || fallback.phone, city: data.city || fallback.city, role: data.role || fallback.role }
-    }
-    return fallback
-  }
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          const formatted = formatUser(session.user)
-          setUser(await enrichFromProfile(formatted))
-        }
-      } catch (e) {
-        console.error('Auth init error:', e)
-      }
-      setLoading(false)
-    }
-    init()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        const formatted = formatUser(session.user)
-        setUser(await enrichFromProfile(formatted))
-      } else {
-        setUser(null)
-      }
-    })
-    return () => subscription?.unsubscribe()
-  }, [])
 
   const login = async (email, password, role = 'client') => {
     clearMockData()
