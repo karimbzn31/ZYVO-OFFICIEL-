@@ -59,6 +59,40 @@ export async function updateProfile(userId, updates) {
   return data
 }
 
+function mapProvider(p) {
+  return {
+    id: p.id,
+    userId: p.user_id,
+    name: p.name,
+    service: p.service || '',
+    category: p.category || '',
+    city: p.city || '',
+    description: p.description || '',
+    price: p.price || '',
+    priceValue: p.price_value || 0,
+    coverGradient: p.cover_gradient || 'from-blue-600 via-blue-500 to-cyan-400',
+    badges: p.badges || [],
+    verifiedDocuments: p.verified_documents || [],
+    gallery: p.gallery || [],
+    rating: p.rating || 0,
+    missions: p.missions || 0,
+    responseRate: p.response_rate || '0%',
+    responseTime: p.response_time || '',
+    likes: p.likes || 0,
+    createdAt: p.created_at,
+    avatarGradient: p.avatar_gradient || 'from-blue-500 to-cyan-400',
+    experience: p.experience || '',
+    languages: p.languages || [],
+    availabilityDays: p.availability_days || [],
+    availabilityFrom: p.availability_from || '08:00',
+    availabilityTo: p.availability_to || '17:00',
+    whatsapp: p.whatsapp || '',
+    instagram: p.instagram || '',
+    facebook: p.facebook || '',
+    zones: p.zones || [],
+  }
+}
+
 export async function getProviders(filters = {}) {
   let query = supabase.from('providers').select('*')
   if (filters.category) query = query.eq('category', filters.category)
@@ -66,7 +100,7 @@ export async function getProviders(filters = {}) {
   if (filters.search) query = query.or(`name.ilike.%${filters.search}%,service.ilike.%${filters.search}%`)
   const { data, error } = await query
   if (error) throw error
-  return data
+  return (data || []).map(mapProvider)
 }
 
 export async function getProvider(id) {
@@ -76,7 +110,7 @@ export async function getProvider(id) {
     .eq('id', id)
     .single()
   if (error) throw error
-  return data
+  return data ? mapProvider(data) : null
 }
 
 export async function updateProvider(id, updates) {

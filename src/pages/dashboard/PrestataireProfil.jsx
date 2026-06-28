@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import { useFavorites } from '../../context/favorites'
 import { useToast } from '../../context/toast'
-import { extendedProviders, reviews, userReviews } from '../../data/dashboardData'
+import { getProvider, getReviews } from '../../lib/supabase'
 import BookingModal from '../../components/dashboard/BookingModal'
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed'
 import { useLoading } from '../../hooks/useLoading'
@@ -15,14 +15,27 @@ import { ProfileCardSkeleton } from '../../components/dashboard/Skeleton'
 
 export default function PrestataireProfil() {
   const { id } = useParams()
-  const provider = extendedProviders.find(p => p.id === Number(id))
+  const [provider, setProvider] = useState(null)
+  const [providerReviews, setProviderReviews] = useState([])
+  const [loading, setLoading] = useState(true)
   const { isFavorite, toggleFavorite } = useFavorites()
   const addToast = useToast()
   const { addView } = useRecentlyViewed()
-  const loading = useLoading(400)
+  const skeletonLoading = useLoading(400)
   const [showBooking, setShowBooking] = useState(false)
   const [newRating, setNewRating] = useState(0)
+  const [hoverRating, setHoverRating] = useState(0)
+  const [newComment, setNewComment] = useState('')
   const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    if (!id) return
+    getProvider(Number(id)).then(p => {
+      setProvider(p)
+      if (p) addView(p)
+    }).finally(() => setLoading(false))
+    getReviews(Number(id)).then(r => setProviderReviews(r || [])).catch(() => {})
+  }, [id])
 
   const handleShare = async () => {
     const url = window.location.href
@@ -42,20 +55,9 @@ export default function PrestataireProfil() {
       addToast('Ajouté aux favoris ❤️', { message: provider.name, type: 'success' })
     }
   }
-  const [newComment, setNewComment] = useState('')
-  const [hoverRating, setHoverRating] = useState(0)
   const [showReviewForm, setShowReviewForm] = useState(false)
 
-  const providerReviews = useMemo(() =>
-    reviews.filter(r => r.providerId === Number(id)),
-    [id]
-  )
-
-  const myReviewForThis = userReviews.find(r => r.providerId === Number(id))
-
-  useEffect(() => { if (provider) addView(provider) }, [provider])
-
-  if (loading) return <ProfileCardSkeleton />
+  if (loading || skeletonLoading) return <ProfileCardSkeleton />
   if (!provider) {
     return (
       <div className="text-center py-16">
@@ -68,7 +70,7 @@ export default function PrestataireProfil() {
   const stats = [
     { icon: Star, label: 'Note', value: provider.rating.toString(), color: 'text-amber-400' },
     { icon: Award, label: 'Missions', value: provider.missions.toString(), color: 'text-blue-400' },
-    { icon: Clock, label: 'Réponse', value: provider.response_time, color: 'text-emerald-400' },
+    { icon: Clock, label: 'Réponse', value: provider.responseTime, color: 'text-emerald-400' },
     { icon: Users, label: 'Likes', value: provider.likes.toString(), color: 'text-pink-400' },
   ]
 
@@ -155,11 +157,11 @@ export default function PrestataireProfil() {
             </span>
           ))}
         </div>
-        {provider.verified_documents && (
+        {provider.verifiedDocuments?.length > 0 && (
           <div className="mt-3 pt-3 border-t border-white/5">
             <p className="text-[10px] sm:text-xs font-semibold text-zyvo-muted uppercase tracking-wider mb-2">Documents vérifiés</p>
             <div className="flex flex-wrap gap-2">
-              {provider.verified_documents.map(d => (
+              {provider.verifiedDocuments.map(d => (
                 <span key={d} className="flex items-center gap-1 text-[10px] sm:text-xs text-zyvo-muted">
                   <CheckCircle className="w-3 h-3 text-emerald-400" /> {d}
                 </span>
@@ -175,8 +177,8 @@ export default function PrestataireProfil() {
           <p className="text-xs text-zyvo-muted">Tarif</p>
           <p className="text-lg sm:text-xl font-extrabold text-white">{provider.price}</p>
         </div>
-        <span className={`text-xs font-bold ${provider.response_rate === '100%' ? 'text-emerald-400' : 'text-zyvo-muted'}`}>
-          Réponse {provider.response_rate}
+        <span className={`text-xs font-bold ${provider.responseRate === '100%' ? 'text-emerald-400' : 'text-zyvo-muted'}`}>
+          Réponse {provider.responseRate}
         </span>
       </div>
 
@@ -206,14 +208,12 @@ export default function PrestataireProfil() {
               Avis ({providerReviews.length})
             </h2>
           </div>
-          {!myReviewForThis && (
-            <button
-              onClick={() => setShowReviewForm(!showReviewForm)}
-              className="text-xs font-semibold text-zyvo-gold hover:underline"
-            >
-              {showReviewForm ? 'Annuler' : 'Donner mon avis'}
-            </button>
-          )}
+          <button
+            onClick={() => setShowReviewForm(!showReviewForm)}
+            className="text-xs font-semibold text-zyvo-gold hover:underline"
+          >
+            {showReviewForm ? 'Annuler' : 'Donner mon avis'}
+          </button>
         </div>
 
         {/* Review Form */}
@@ -256,47 +256,30 @@ export default function PrestataireProfil() {
           </div>
         )}
 
-        {/* My existing review */}
-        {myReviewForThis && (
-          <div className="mb-4 p-3 sm:p-4 rounded-xl bg-zyvo-gold/5 border border-zyvo-gold/10">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-zyvo-gold">Votre avis</span>
-              <div className="flex items-center gap-1">
-                {[1,2,3,4,5].map(s => (
-                  <Star key={s} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${s <= myReviewForThis.rating ? 'fill-amber-400 text-amber-400' : 'text-zyvo-muted'}`} strokeWidth={1.5} />
-                ))}
-              </div>
-            </div>
-            <p className="text-xs sm:text-sm text-white">{myReviewForThis.comment}</p>
-            <div className="flex items-center gap-3 mt-2 text-[10px] sm:text-xs text-zyvo-muted">
-              <span>{myReviewForThis.date}</span>
-              <span>{myReviewForThis.likes} likes</span>
-            </div>
-          </div>
-        )}
-
         {/* Reviews list */}
         <div className="space-y-3 sm:space-y-4">
           {providerReviews.map((review) => (
             <div key={review.id} className="p-3 sm:p-4 rounded-xl bg-white/5 hover:bg-white/[0.07] transition-colors">
               <div className="flex items-center gap-3 mb-2">
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-zyvo-gold/20 to-zyvo-gold/10 flex items-center justify-center text-[9px] sm:text-xs font-bold text-zyvo-gold shrink-0`}>
-                  {review.userAvatar}
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-zyvo-gold/20 to-zyvo-gold/10 flex items-center justify-center text-[9px] sm:text-xs font-bold text-zyvo-gold shrink-0">
+                  {review.client?.name?.charAt(0) || 'U'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-xs sm:text-sm text-white truncate">{review.userName}</p>
+                  <p className="font-bold text-xs sm:text-sm text-white truncate">{review.client?.name || 'Utilisateur'}</p>
                   <div className="flex items-center gap-1">
                     {[1,2,3,4,5].map(s => (
                       <Star key={s} className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${s <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-zyvo-muted/30'}`} strokeWidth={1.5} />
                     ))}
                   </div>
                 </div>
-                <span className="text-[9px] sm:text-xs text-zyvo-muted shrink-0">{review.date}</span>
+                <span className="text-[9px] sm:text-xs text-zyvo-muted shrink-0">
+                  {review.created_at ? new Date(review.created_at).toLocaleDateString('fr-FR') : ''}
+                </span>
               </div>
               <p className="text-xs sm:text-sm text-zyvo-muted leading-relaxed">{review.comment}</p>
               <div className="flex items-center gap-3 mt-2">
                 <button className="flex items-center gap-1 text-[10px] sm:text-xs text-zyvo-muted hover:text-white transition-colors">
-                  <ThumbsUp className="w-3 h-3" /> {review.likes}
+                  <ThumbsUp className="w-3 h-3" /> {review.likes || 0}
                 </button>
               </div>
             </div>

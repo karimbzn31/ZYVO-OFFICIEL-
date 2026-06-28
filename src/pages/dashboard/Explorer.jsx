@@ -7,7 +7,8 @@ import {
 } from 'lucide-react'
 import { useFavorites } from '../../context/favorites'
 import { useAuth } from '../../context/auth'
-import { extendedProviders, cities as allCities } from '../../data/dashboardData'
+import { getProviders } from '../../lib/supabase'
+import { cities as allCities } from '../../data/dashboardData'
 import { useLoading } from '../../hooks/useLoading'
 import { GridSkeleton } from '../../components/dashboard/Skeleton'
 
@@ -108,7 +109,7 @@ function ProviderCard({ provider, detectedCity }) {
           <span className="text-white/20">|</span>
           <span className="text-zyvo-muted flex items-center gap-0.5">
             <Reply className="w-2.5 h-2.5 text-emerald-400/70" />
-            <span className="font-semibold text-emerald-400">{provider.response_rate}</span>
+            <span className="font-semibold text-emerald-400">{provider.responseRate}</span>
             <span>réponse</span>
           </span>
         </div>
@@ -166,6 +167,15 @@ export default function Explorer() {
   const [showFilters, setShowFilters] = useState(false)
   const [detectedCity, setDetectedCity] = useState(user?.city || '')
   const [geoStatus, setGeoStatus] = useState(user?.city ? 'detected' : 'idle')
+  const [providers, setProviders] = useState([])
+  const [fetching, setFetching] = useState(true)
+
+  useEffect(() => {
+    getProviders().then(data => {
+      setProviders(data)
+      setFetching(false)
+    }).catch(() => setFetching(false))
+  }, [])
 
   useEffect(() => {
     if (detectedCity) return
@@ -189,7 +199,7 @@ export default function Explorer() {
   }, [detectedCity])
 
   const filtered = useMemo(() => {
-    let result = [...extendedProviders]
+    let result = [...providers]
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       result = result.filter(p =>
@@ -216,7 +226,7 @@ export default function Explorer() {
 
   const activeFilters = [selectedCategory !== 'all', selectedCity !== '', searchQuery !== ''].filter(Boolean).length
 
-  if (loading) {
+  if (loading || fetching) {
     return (
       <div className="space-y-4 overflow-x-hidden">
         <div className="flex items-center justify-between">

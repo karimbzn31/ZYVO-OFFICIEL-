@@ -12,7 +12,8 @@ import { useBookings } from '../../context/booking'
 import { useRecentlyViewed } from '../../hooks/useRecentlyViewed'
 import { useLoading } from '../../hooks/useLoading'
 import { useNotifications } from '../../context/notifications'
-import { extendedProviders, activityFeed, myBookings } from '../../data/dashboardData'
+import { getProviders } from '../../lib/supabase'
+import { activityFeed, myBookings } from '../../data/dashboardData'
 import { quotes } from '../../data/quotesData'
 
 const statusConfig = {
@@ -227,8 +228,15 @@ export default function Accueil() {
   const { unreadCount } = useNotifications()
   const loading = useLoading(200)
   const [greeting, setGreeting] = useState(getGreeting)
+  const [topProviders, setTopProviders] = useState([])
 
-  useEffect(() => { setGreeting(getGreeting()) }, [])
+  useEffect(() => {
+    setGreeting(getGreeting())
+    getProviders().then(data => {
+      const sorted = [...data].sort((a, b) => b.rating - a.rating).slice(0, 6)
+      setTopProviders(sorted)
+    }).catch(() => {})
+  }, [])
 
   const stats = useMemo(() => [
     { icon: FileText, label: 'Devis en cours', value: quotes.filter(q => q.status === 'pending' || q.status === 'answered').length, gradient: 'from-blue-500 to-cyan-400', delay: 0.05 },
@@ -243,11 +251,6 @@ export default function Accueil() {
   )
 
   const recentQuotes = useMemo(() => quotes.slice(0, 3), [])
-
-  const topProviders = useMemo(
-    () => [...extendedProviders].sort((a, b) => b.rating - a.rating).slice(0, 6),
-    []
-  )
 
   if (loading) return <SkeletonState />
 

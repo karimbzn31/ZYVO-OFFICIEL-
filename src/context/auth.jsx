@@ -73,6 +73,18 @@ export function AuthProvider({ children }) {
         city: city || '',
         role,
       }).maybeSingle()
+
+      if (role === 'prestataire') {
+        await supabase.from('providers').insert({
+          user_id: data.user.id,
+          name,
+          city: city || '',
+          service: 'Mon service',
+          category: '',
+          cover_gradient: 'from-blue-600 via-blue-500 to-cyan-400',
+        }).maybeSingle()
+      }
+
       setUser({ id: data.user.id, name, phone, email, city, role })
     }
     return data
