@@ -67,6 +67,7 @@ const ProviderServices = lazy(() => import('./pages/dashboard/prestataire/Servic
 const ProviderCalendrier = lazy(() => import('./pages/dashboard/prestataire/Calendrier'))
 const ProviderRevenus = lazy(() => import('./pages/dashboard/prestataire/Revenus'))
 const ProviderAvis = lazy(() => import('./pages/dashboard/prestataire/Avis'))
+const ProviderStatistiques = lazy(() => import('./pages/dashboard/prestataire/Statistiques'))
 const ProviderProfil = lazy(() => import('./pages/dashboard/prestataire/Profil'))
 
 function ScrollToTop() {
@@ -164,6 +165,7 @@ function AppContent() {
                   <Route path="calendrier" element={<ProviderCalendrier />} />
                   <Route path="messages" element={<DashboardMessagerie />} />
                   <Route path="revenus" element={<ProviderRevenus />} />
+                  <Route path="statistiques" element={<ProviderStatistiques />} />
                   <Route path="avis" element={<ProviderAvis />} />
                   <Route path="profil" element={<ProviderProfil />} />
                 </Route>

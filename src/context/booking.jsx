@@ -41,12 +41,19 @@ export function BookingProvider({ children }) {
     sync(updated)
   }, [bookings, sync])
 
+  const updateBooking = useCallback((id, changes) => {
+    const updated = bookings.map(b =>
+      b.id === id ? { ...b, ...changes } : b
+    )
+    sync(updated)
+  }, [bookings, sync])
+
   const userBookings = user
     ? bookings.filter(b => b.userPhone === user.phone)
     : []
 
   return (
-    <BookingContext.Provider value={{ bookings: userBookings, allBookings: bookings, addBooking, cancelBooking }}>
+    <BookingContext.Provider value={{ bookings: userBookings, allBookings: bookings, addBooking, cancelBooking, updateBooking }}>
       {children}
     </BookingContext.Provider>
   )

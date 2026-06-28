@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate, Link, useLocation } from 'react-router-do
 import { motion } from 'framer-motion'
 import {
   LayoutDashboard, FileText, Briefcase, Calendar, MessageCircle, DollarSign,
-  Star, User, LogOut, Menu, X, Bell, ChevronDown, ArrowLeft
+  Star, User, LogOut, Menu, X, Bell, ChevronDown, ArrowLeft, BarChart3
 } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { useNotifications } from '../../context/notifications'
@@ -17,6 +17,7 @@ const navItems = [
   { to: '/dashboard/prestataire/calendrier', icon: Calendar, label: 'Calendrier', badgeKey: null },
   { to: '/dashboard/prestataire/messages', icon: MessageCircle, label: 'Messages', badgeKey: 'messages' },
   { to: '/dashboard/prestataire/revenus', icon: DollarSign, label: 'Revenus', badgeKey: null },
+  { to: '/dashboard/prestataire/statistiques', icon: BarChart3, label: 'Statistiques', badgeKey: null },
   { to: '/dashboard/prestataire/avis', icon: Star, label: 'Avis', badgeKey: null },
   { to: '/dashboard/prestataire/profil', icon: User, label: 'Profil', badgeKey: null },
 ]
@@ -25,7 +26,7 @@ const bottomNavItems = [
   { to: '/dashboard/prestataire', icon: LayoutDashboard, label: 'Accueil', end: true, badgeKey: null },
   { to: '/dashboard/prestataire/demandes', icon: FileText, label: 'Demandes', badgeKey: null },
   { to: '/dashboard/prestataire/messages', icon: MessageCircle, label: 'Messages', badgeKey: 'messages' },
-  { to: '/dashboard/prestataire/revenus', icon: DollarSign, label: 'Revenus', badgeKey: null },
+  { to: '/dashboard/prestataire/statistiques', icon: BarChart3, label: 'Stats', badgeKey: null },
   { to: '/dashboard/prestataire/profil', icon: User, label: 'Profil', badgeKey: null },
 ]
 
