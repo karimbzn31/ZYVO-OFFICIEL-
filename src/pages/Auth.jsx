@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, Briefcase, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
-import { useAuth } from '../context/auth'
+import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, Briefcase, AlertCircle, KeyRound } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 import { useToast } from '../context/toast'
+import { useAuth } from '../context/auth'
 
 const algerianCities = [
   'Alger', 'Oran', 'Constantine', 'Blida', 'Annaba', 'Tizi Ouzou',
@@ -59,17 +60,15 @@ export default function Auth() {
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [loginEmail, setLoginEmail] = useState('')
-  const [loginPassword, setLoginPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+  const [otp, setOtp] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [verifyMode, setVerifyMode] = useState(false)
   const [error, setError] = useState('')
-  const [magicSent, setMagicSent] = useState(false)
-  const [registered, setRegistered] = useState(false)
-  const { login, register, sendMagicLink } = useAuth()
+  const [countdown, setCountdown] = useState(0)
   const { addToast } = useToast()
   const navigate = useNavigate()
+  const otpRef = useRef(null)
 
   useEffect(() => {
     if (selectedRole === 'prestataire') {
@@ -80,29 +79,45 @@ export default function Auth() {
     setError('')
   }, [selectedRole])
 
-  const getRedirect = () => selectedRole === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client'
+  useEffect(() => {
+    if (verifyMode && otpRef.current) otpRef.current.focus()
+  }, [verifyMode])
+
+  useEffect(() => {
+    if (countdown <= 0) return
+    const t = setInterval(() => setCountdown(c => c - 1), 1000)
+    return () => clearInterval(t)
+  }, [countdown])
+
+  const sendOtp = async (emailAddr) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: emailAddr,
+      options: { shouldCreateUser: true },
+    })
+    if (error) throw error
+  }
 
   const handleRegister = async (e) => {
     e.preventDefault()
     setError('')
-    if (!name.trim() || !phone.trim() || !email.trim() || !password.trim()) {
-      setError('Veuillez remplir tous les champs obligatoires')
+    if (!name.trim() || !phone.trim() || !email.trim()) {
+      setError('Veuillez remplir tous les champs')
       return
     }
-    if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères')
-      return
-    }
-    if (selectedRole !== 'prestataire' && !city) {
+    if (!city) {
       setError('Veuillez sélectionner votre ville')
       return
     }
     setSubmitting(true)
     try {
-      await register({ name: name.trim(), phone, email: email.trim(), city: city || '', role: selectedRole || 'client', password })
-      setRegistered(true)
+      await sendOtp(email.trim())
+      setVerifyMode(true)
+      setCountdown(60)
+      setOtp('')
+      setTimeout(() => otpRef.current?.focus(), 100)
     } catch (err) {
-      setError(err.message || 'Erreur lors de l\'inscription')
+      setError(err.message || 'Erreur lors de l\'envoi du code')
+    } finally {
       setSubmitting(false)
     }
   }
@@ -110,75 +125,180 @@ export default function Auth() {
   const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
-    if (!loginEmail.trim() || !loginPassword.trim()) {
-      setError('Veuillez remplir votre email et mot de passe')
-      return
-    }
-    setSubmitting(true)
-    try {
-      await login(loginEmail.trim(), loginPassword.trim(), selectedRole || 'client')
-      addToast('Connexion réussie', { message: 'Bon retour sur Zyvo !', type: 'success' })
-      navigate(getRedirect())
-    } catch (err) {
-      setError(err.message || 'Email ou mot de passe incorrect')
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
-  const handleSendMagicLink = async () => {
-    setError('')
     if (!loginEmail.trim()) {
       setError('Veuillez entrer votre email')
       return
     }
     setSubmitting(true)
     try {
-      await sendMagicLink(loginEmail.trim())
-      setMagicSent(true)
+      await sendOtp(loginEmail.trim())
+      setVerifyMode(true)
+      setEmail(loginEmail.trim())
+      setCountdown(60)
+      setOtp('')
+      setTimeout(() => otpRef.current?.focus(), 100)
     } catch (err) {
-      setError(err.message || 'Erreur lors de l\'envoi du lien')
+      setError(err.message || 'Erreur lors de l\'envoi du code')
+    } finally {
       setSubmitting(false)
     }
   }
 
-  if (registered) {
-    return (
-      <div className="py-8 max-w-sm mx-auto text-center">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-          <Mail className="w-7 h-7 text-emerald-400" />
-        </div>
-        <h1 className="text-xl font-extrabold mb-2">Vérifie ta boîte email</h1>
-        <p className="text-sm text-zyvo-muted mb-6">
-          Un email de confirmation a été envoyé à <strong className="text-white">{email}</strong>.<br />
-          Clique sur le lien pour activer ton compte.
-        </p>
-        <button
-          onClick={() => { setRegistered(false); setMode('login') }}
-          className="text-sm text-zyvo-gold font-bold hover:underline"
-        >
-          Se connecter après confirmation
-        </button>
-      </div>
-    )
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault()
+    setError('')
+    if (otp.length !== 6) {
+      setError('Le code doit contenir 6 chiffres')
+      return
+    }
+    setSubmitting(true)
+    try {
+      const targetEmail = mode === 'login' ? loginEmail.trim() : email.trim()
+      const { data, error: verifyError } = await supabase.auth.verifyOtp({
+        email: targetEmail,
+        token: otp,
+        type: 'email',
+      })
+      if (verifyError) throw verifyError
+
+      // Check if user already has a profile
+      if (data?.user) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('id, role')
+          .eq('id', data.user.id)
+          .maybeSingle()
+
+        if (profile) {
+          addToast('Connecté', { message: 'Bon retour sur Zyvo !', type: 'success' })
+          navigate('/dashboard/' + (profile.role === 'prestataire' ? 'prestataire' : 'client'))
+          return
+        }
+      }
+
+      // New user — create profile
+      if (mode === 'register' && data?.user) {
+        const role = selectedRole || 'client'
+        const { error: uErr } = await supabase.from('users').insert({
+          id: data.user.id,
+          name: name.trim(),
+          phone,
+          email: targetEmail,
+          city,
+          role,
+        }).select().single()
+        if (uErr) throw uErr
+
+        if (role === 'prestataire') {
+          const { error: pErr } = await supabase.from('providers').insert({
+            user_id: data.user.id,
+            name: name.trim(),
+            city,
+            service: 'Mon service',
+            category: '',
+            cover_gradient: 'from-blue-600 via-blue-500 to-cyan-400',
+          }).select().single()
+          if (pErr) throw pErr
+        }
+
+        addToast('Compte créé avec succès', { message: 'Bienvenue sur Zyvo !', type: 'success' })
+        navigate('/dashboard/' + (role === 'prestataire' ? 'prestataire' : 'client'))
+      } else {
+        setError('Impossible de trouver votre profil')
+      }
+    } catch (err) {
+      setError(err.message || 'Code invalide ou expiré')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
-  if (magicSent) {
+  const resendOtp = async () => {
+    setError('')
+    setSubmitting(true)
+    try {
+      const targetEmail = mode === 'login' ? loginEmail.trim() : email.trim()
+      await sendOtp(targetEmail)
+      setCountdown(60)
+      addToast('Nouveau code envoyé', { message: 'Vérifie ta boîte email', type: 'success' })
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (verifyMode) {
     return (
-      <div className="py-8 max-w-sm mx-auto text-center">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
-          <Mail className="w-7 h-7 text-emerald-400" />
+      <div className="py-8 max-w-sm mx-auto">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-7 h-7 text-emerald-400" />
+          </div>
+          <h1 className="text-xl font-extrabold mb-1">Code de validation</h1>
+          <p className="text-sm text-zyvo-muted">
+            Un code à 6 chiffres a été envoyé à<br />
+            <strong className="text-white">{mode === 'login' ? loginEmail : email}</strong>
+          </p>
         </div>
-        <h1 className="text-xl font-extrabold mb-2">Lien magique envoyé</h1>
-        <p className="text-sm text-zyvo-muted mb-6">
-          Vérifie ta boîte email <strong className="text-white">{loginEmail}</strong> et clique sur le lien pour te connecter.
-        </p>
-        <button
-          onClick={() => { setMagicSent(false); setSubmitting(false) }}
-          className="text-sm text-zyvo-gold font-bold hover:underline"
-        >
-          Réessayer avec un autre email
-        </button>
+
+        {error && (
+          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 mb-4">
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+            <p className="text-xs text-red-300">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleVerifyOtp} className="space-y-4">
+          <div>
+            <label className="text-xs font-bold text-zyvo-muted mb-2 block text-center">Code de vérification</label>
+            <input
+              ref={otpRef}
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="0 0 0 0 0 0"
+              value={otp}
+              onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 text-center text-2xl font-bold tracking-[0.5em] text-white outline-none focus:border-zyvo-gold/40 transition-colors"
+              autoComplete="one-time-code"
+            />
+            <p className="text-[10px] text-zyvo-muted text-center mt-2">Entre le code reçu par email</p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting || otp.length !== 6}
+            className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100 transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            {submitting ? 'Vérification...' : 'Valider'} <KeyRound className="w-4 h-4" />
+          </button>
+
+          <div className="text-center">
+            {countdown > 0 ? (
+              <p className="text-xs text-zyvo-muted">
+                Renvoyer un code dans <span className="text-white font-bold">{countdown}s</span>
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={resendOtp}
+                disabled={submitting}
+                className="text-xs text-zyvo-gold font-bold hover:underline"
+              >
+                Renvoyer le code
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => { setVerifyMode(false); setOtp(''); setError('') }}
+            className="flex items-center justify-center gap-1 text-xs text-zyvo-muted hover:text-white transition-colors mx-auto"
+          >
+            <ChevronLeft className="w-3 h-3" /> Changer d'email
+          </button>
+        </form>
       </div>
     )
   }
@@ -275,46 +395,12 @@ export default function Auth() {
               />
             </div>
           </div>
-          <div>
-            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Mot de passe</label>
-            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
-              <Lock className="w-4 h-4 text-zyvo-muted shrink-0" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Votre mot de passe"
-                value={loginPassword}
-                onChange={e => setLoginPassword(e.target.value)}
-                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-                required
-              />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-zyvo-muted hover:text-white transition-colors">
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
           <button
             type="submit"
             disabled={submitting}
             className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100 transition-all duration-300 glow-worm flex items-center justify-center gap-2"
           >
-            {submitting ? 'Connexion...' : 'Se connecter'} <ArrowRight className="w-4 h-4" />
-          </button>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-zyvo-dark px-3 text-[10px] text-zyvo-muted font-semibold">OU</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={handleSendMagicLink}
-            disabled={submitting}
-            className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2"
-          >
-            <Mail className="w-4 h-4" />
-            {submitting ? 'Envoi...' : 'Lien magique'}
+            {submitting ? 'Envoi...' : 'Envoyer le code'} <Mail className="w-4 h-4" />
           </button>
         </form>
       ) : (
@@ -349,24 +435,6 @@ export default function Auth() {
             </div>
           </div>
           <div>
-            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Mot de passe</label>
-            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
-              <Lock className="w-4 h-4 text-zyvo-muted shrink-0" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Minimum 6 caractères"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-                required
-                minLength={6}
-              />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-zyvo-muted hover:text-white transition-colors">
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-          <div>
             <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Téléphone</label>
             <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
               <Phone className="w-4 h-4 text-zyvo-muted shrink-0" />
@@ -392,7 +460,7 @@ export default function Auth() {
             disabled={submitting}
             className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100 transition-all duration-300 glow-worm flex items-center justify-center gap-2"
           >
-            {submitting ? 'Inscription...' : 'S\'inscrire'} <ArrowRight className="w-4 h-4" />
+            {submitting ? 'Envoi...' : "S'inscrire"} <ArrowRight className="w-4 h-4" />
           </button>
         </form>
       )}
