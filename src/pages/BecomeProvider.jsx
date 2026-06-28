@@ -1,6 +1,8 @@
-import { useState, useRef, useCallback } from 'react'
-import { Link } from 'react-router-dom'
-import { Sparkles, ShieldCheck, TrendingUp, Users, Star, Zap, DollarSign, CheckCircle, ArrowRight, Award, Smartphone, Clock, ChevronLeft, Upload, Camera, MapPin, Briefcase, Scissors, Wrench, Home, Monitor, GraduationCap, Truck, Palette, Dumbbell, Camera as CameraIcon, ChevronDown, X } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/auth'
+import { useToast } from '../context/toast'
+import { Sparkles, ShieldCheck, TrendingUp, Users, Star, Zap, DollarSign, CheckCircle, ArrowRight, Award, Smartphone, Clock, ChevronLeft, Upload, Camera, MapPin, Briefcase, Scissors, Wrench, Home, Monitor, GraduationCap, Truck, Palette, Dumbbell, Camera as CameraIcon, ChevronDown, X, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 
 const benefits = [
   { icon: TrendingUp, title: 'Développez votre activité', desc: 'Rejoignez des milliers de clients actifs chaque jour sur Zyvo. Augmentez votre chiffre d\'affaires sans effort.' },
@@ -95,6 +97,7 @@ function Field({ label, error, children }) {
 
 function StepProfil({ form, setForm, errors }) {
   const update = (field, val) => setForm(prev => ({ ...prev, [field]: val }))
+  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <div className="space-y-5 stagger-fade">
@@ -119,28 +122,41 @@ function StepProfil({ form, setForm, errors }) {
         </Field>
       </div>
 
-      <Field label="Numéro de téléphone *" error={errors.phone}>
-        <input type="tel" value={form.phone} onChange={e => update('phone', e.target.value)}
-          placeholder="05XX XX XX XX"
-          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none focus:border-zyvo-gold/40 transition-colors" />
-      </Field>
-
-      <Field label="Email">
+      <Field label="Email *" error={errors.email}>
         <input type="email" value={form.email} onChange={e => update('email', e.target.value)}
           placeholder="email@example.com"
           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none focus:border-zyvo-gold/40 transition-colors" />
       </Field>
 
-      <Field label="Ville *" error={errors.city}>
-        <div className="relative">
-          <select value={form.city} onChange={e => update('city', e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-zyvo-gold/40 transition-colors appearance-none cursor-pointer">
-            <option value="" className="bg-zyvo-surface">Sélectionnez votre ville</option>
-            {cities.map(c => <option key={c} value={c} className="bg-zyvo-surface">{c}</option>)}
-          </select>
-          <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zyvo-muted pointer-events-none" />
+      <Field label="Mot de passe *" error={errors.password}>
+        <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus-within:border-zyvo-gold/40 transition-colors">
+          <Lock className="w-4 h-4 text-zyvo-muted shrink-0" />
+          <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => update('password', e.target.value)}
+            placeholder="Minimum 6 caractères"
+            className="w-full bg-transparent outline-none text-sm text-white placeholder-white/20" />
+          <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-zyvo-muted hover:text-white transition-colors shrink-0">
+            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
         </div>
       </Field>
+
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Field label="Numéro de téléphone *" error={errors.phone}>
+          <input type="tel" value={form.phone} onChange={e => update('phone', e.target.value)}
+            placeholder="05XX XX XX XX"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none focus:border-zyvo-gold/40 transition-colors" />
+        </Field>
+        <Field label="Ville *" error={errors.city}>
+          <div className="relative">
+            <select value={form.city} onChange={e => update('city', e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-zyvo-gold/40 transition-colors appearance-none cursor-pointer">
+              <option value="" className="bg-zyvo-surface">Sélectionnez votre ville</option>
+              {cities.map(c => <option key={c} value={c} className="bg-zyvo-surface">{c}</option>)}
+            </select>
+            <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zyvo-muted pointer-events-none" />
+          </div>
+        </Field>
+      </div>
 
       <Field label="Bio (optionnelle)">
         <textarea value={form.bio} onChange={e => update('bio', e.target.value)}
@@ -368,6 +384,10 @@ function StepConfirmation({ form }) {
           <span className="text-sm font-bold text-white">{form.phone || '-'}</span>
         </div>
         <div className="p-4 flex items-center justify-between">
+          <span className="text-sm text-zyvo-muted">Email</span>
+          <span className="text-sm font-bold text-white">{form.email || '-'}</span>
+        </div>
+        <div className="p-4 flex items-center justify-between">
           <span className="text-sm text-zyvo-muted">Ville</span>
           <span className="text-sm font-bold text-white">{form.city || '-'}</span>
         </div>
@@ -405,12 +425,17 @@ function StepConfirmation({ form }) {
 export default function BecomeProvider() {
   const [step, setStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
+  const { register } = useAuth()
+  const { addToast } = useToast()
+  const navigate = useNavigate()
   const [form, setForm] = useState({
-    prenom: '', nom: '', phone: '', email: '', city: '', bio: '',
+    prenom: '', nom: '', phone: '', email: '', password: '', city: '', bio: '',
     services: [], tarif: '', experience: '',
     dispoDays: [], dispoTimes: [],
     idFile: null, idFileName: '',
   })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [errors, setErrors] = useState({})
 
   const validate = () => {
@@ -418,6 +443,9 @@ export default function BecomeProvider() {
     if (step === 1) {
       if (!form.prenom.trim()) errs.prenom = 'Prénom requis'
       if (!form.nom.trim()) errs.nom = 'Nom requis'
+      if (!form.email.trim()) errs.email = 'Email requis'
+      if (!form.password.trim()) errs.password = 'Mot de passe requis'
+      else if (form.password.length < 6) errs.password = 'Minimum 6 caractères'
       if (!form.phone.trim()) errs.phone = 'Téléphone requis'
       if (!form.city) errs.city = 'Ville requise'
     }
@@ -448,9 +476,24 @@ export default function BecomeProvider() {
     setErrors({})
   }
 
-  const handleSubmit = () => {
-    setSubmitted(true)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  const handleSubmit = async () => {
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      await register({
+        name: `${form.prenom} ${form.nom}`.trim(),
+        phone: form.phone,
+        email: form.email,
+        city: form.city,
+        role: 'prestataire',
+        password: form.password,
+      })
+      addToast('Compte prestataire créé', { message: 'Bienvenue sur Zyvo ! Complétez votre profil pour commencer.', type: 'success' })
+      navigate('/dashboard/prestataire/profil')
+    } catch (err) {
+      setSubmitError(err.message || 'Erreur lors de la création du compte')
+      setSubmitting(false)
+    }
   }
 
   if (submitted) {
@@ -460,19 +503,20 @@ export default function BecomeProvider() {
           <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-emerald-400" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">Demande envoyée !</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">Compte créé !</h2>
           <p className="text-zyvo-muted text-sm leading-relaxed max-w-sm mx-auto">
-            Merci <strong className="text-white">{form.prenom}</strong> ! 
-            Notre équipe vérifie votre dossier. Vous recevrez une notification sous 24h 
-            dès que votre profil sera actif.
+            Bienvenue <strong className="text-white">{form.prenom}</strong> ! 
+            Tu es maintenant inscrit sur Zyvo. 
+            Complète ton profil pour commencer à recevoir des missions.
           </p>
           <div className="flex flex-col items-center gap-3 mt-8">
-            <div className="flex items-center gap-2 text-xs text-zyvo-muted">
-              <Clock className="w-3.5 h-3.5 text-zyvo-gold" /> Vérification express
-            </div>
+            <Link to="/dashboard/prestataire/profil"
+              className="inline-flex items-center gap-2 gradient-brand text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition-all glow-worm">
+              Compléter mon profil <ArrowRight className="w-4 h-4" />
+            </Link>
             <Link to="/"
-              className="inline-flex items-center gap-2 gradient-brand text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition-all glow-worm mt-4">
-              Retour à l'accueil <ArrowRight className="w-4 h-4" />
+              className="text-xs text-zyvo-muted hover:text-white transition-colors">
+              Retour à l'accueil
             </Link>
           </div>
         </div>
@@ -504,6 +548,13 @@ export default function BecomeProvider() {
           <StepContent step={step} form={form} setForm={setForm} errors={errors} />
         </div>
 
+        {submitError && (
+          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 mb-4">
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+            <p className="text-xs text-red-300">{submitError}</p>
+          </div>
+        )}
+
         {/* NAVIGATION */}
         <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
           <button
@@ -528,9 +579,10 @@ export default function BecomeProvider() {
           ) : (
             <button
               onClick={handleSubmit}
-              className="gradient-brand text-white font-bold px-8 py-2.5 rounded-xl shadow-lg hover:scale-105 transition-all glow-worm flex items-center gap-2"
+              disabled={submitting}
+              className="gradient-brand text-white font-bold px-8 py-2.5 rounded-xl shadow-lg hover:scale-105 transition-all disabled:opacity-60 disabled:hover:scale-100 glow-worm flex items-center gap-2"
             >
-              <CheckCircle className="w-4 h-4" /> Envoyer ma demande
+              {submitting ? 'Création du compte...' : <><CheckCircle className="w-4 h-4" /> Créer mon compte</>}
             </button>
           )}
         </div>
