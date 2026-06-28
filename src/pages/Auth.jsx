@@ -53,6 +53,7 @@ function CitySelect({ value, onChange }) {
 }
 
 export default function Auth() {
+  const [step, setStep] = useState(0)
   const [mode, setMode] = useState('register')
   const [selectedRole, setSelectedRole] = useState(null)
   const [name, setName] = useState('')
@@ -69,7 +70,19 @@ export default function Auth() {
   const { addToast } = useToast()
   const navigate = useNavigate()
 
+  function pickRole(role) {
+    setSelectedRole(role)
+    if (role === 'prestataire') setMode('login')
+    else setMode('register')
+    setError('')
+    setStep(1)
+  }
 
+  function backToRoles() {
+    setSelectedRole(null)
+    setStep(0)
+    setError('')
+  }
 
   const getRedirect = () => selectedRole === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client'
 
@@ -119,7 +132,7 @@ export default function Auth() {
     }
   }
 
-  if (!selectedRole) {
+  if (step === 0) {
     return (
       <div className="py-8 max-w-sm mx-auto">
         <div className="text-center mb-8">
@@ -132,7 +145,7 @@ export default function Auth() {
 
         <div className="space-y-3">
           <button
-            onClick={() => { setSelectedRole('client'); setMode('register'); setError('') }}
+            onClick={() => pickRole('client')}
             className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
           >
             <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg">
@@ -146,7 +159,7 @@ export default function Auth() {
           </button>
 
           <button
-            onClick={() => { setSelectedRole('prestataire'); setMode('login'); setError('') }}
+            onClick={() => pickRole('prestataire')}
             className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
           >
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-600 to-orange-500 flex items-center justify-center shrink-0 shadow-lg">
@@ -180,7 +193,7 @@ export default function Auth() {
         </p>
         <button
           type="button"
-          onClick={() => { setSelectedRole(null); setError('') }}
+          onClick={backToRoles}
           className="text-xs text-zyvo-muted hover:text-white transition-colors mt-2 flex items-center justify-center gap-1 mx-auto"
         >
           <ChevronLeft className="w-3 h-3" /> Changer de rôle
