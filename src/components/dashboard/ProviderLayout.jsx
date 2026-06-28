@@ -7,7 +7,8 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../../context/auth'
 import { useNotifications } from '../../context/notifications'
-import { chatMessages, extendedProviders } from '../../data/dashboardData'
+import { getProviders } from '../../lib/supabase'
+import { chatMessages } from '../../data/dashboardData'
 import Logo from '../Logo'
 
 const navItems = [
@@ -47,8 +48,8 @@ function Sidebar({ open, onClose, badgeCounts, provider }) {
 
         {provider && (
           <div className="mx-3 mt-3 p-3 rounded-xl bg-white/5 flex items-center gap-3">
-            <div className={"w-9 h-9 rounded-xl bg-gradient-to-br ".concat(provider.coverGradient, " flex items-center justify-center text-sm font-bold text-white shadow-lg shrink-0")}>
-              {provider.name.charAt(0)}
+            <div className={"w-9 h-9 rounded-xl bg-gradient-to-br ".concat(provider.coverGradient || 'from-blue-500 to-cyan-400', " flex items-center justify-center text-sm font-bold text-white shadow-lg shrink-0")}>
+              {provider.name?.charAt(0) || '?'}
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-white truncate">{provider.name}</p>
@@ -105,24 +106,33 @@ function Sidebar({ open, onClose, badgeCounts, provider }) {
 
 export default function ProviderLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [supabaseProvider, setSupabaseProvider] = useState(null)
   const { user } = useAuth()
   const location = useLocation()
 
+  useEffect(() => {
+    if (!user) return
+    getProviders({ search: user.name })
+      .then(data => {
+        if (data?.length > 0) setSupabaseProvider(data[0])
+        else setSupabaseProvider(null)
+      })
+      .catch(() => setSupabaseProvider(null))
+  }, [user])
+
   const provider = useMemo(() => {
-    if (!user) return null
-    const base = extendedProviders.find(p => p.name === user.name) || extendedProviders[0]
-    if (!base) return null
+    if (!supabaseProvider) return null
     try {
       const raw = localStorage.getItem('zyvo_provider_edits')
       if (raw) {
         const edits = JSON.parse(raw)
-        if (edits[base.id]) {
-          return { ...base, ...edits[base.id] }
+        if (edits[supabaseProvider.id]) {
+          return { ...supabaseProvider, ...edits[supabaseProvider.id] }
         }
       }
     } catch {}
-    return base
-  }, [user])
+    return supabaseProvider
+  }, [supabaseProvider])
 
   const badgeCounts = useMemo(() => ({
     messages: chatMessages.filter(c => c.unread > 0).length,

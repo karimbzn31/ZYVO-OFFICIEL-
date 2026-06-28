@@ -1,42 +1,92 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
 
-const STORAGE_KEY = 'zyvo_user'
+function clearMockData() {
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('zyvo_'))
+  keys.forEach(k => localStorage.removeItem(k))
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) setUser(JSON.parse(stored))
-    } catch {}
-    setLoading(false)
+    const init = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          setUser(formatUser(session.user))
+        }
+      } catch (e) {
+        console.error('Auth init error:', e)
+      }
+      setLoading(false)
+    }
+    init()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(formatUser(session.user))
+      } else {
+        setUser(null)
+      }
+    })
+    return () => subscription?.unsubscribe()
   }, [])
 
-  const saveUser = (u) => {
-    setUser(u)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(u))
+  function formatUser(supabaseUser) {
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email || '',
+      name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'Utilisateur',
+      phone: supabaseUser.user_metadata?.phone || '',
+      city: supabaseUser.user_metadata?.city || '',
+      role: supabaseUser.user_metadata?.role || 'client',
+    }
   }
 
-  const login = (email, name, role = 'client') => {
-    saveUser({ email, name: name || 'Utilisateur', role })
+  const login = async (email, password, role = 'client') => {
+    clearMockData()
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw error
+    const formatted = formatUser(data.user)
+    setUser({ ...formatted, role })
+    return data
   }
 
-  const register = ({ name, phone, email, city, role = 'client' }) => {
-    saveUser({ name, phone, email: email || '', city: city || '', role })
+  const register = async ({ name, phone, email, city, role = 'client', password }) => {
+    clearMockData()
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name, phone, city, role } },
+    })
+    if (error) throw error
+    if (data.user) {
+      await supabase.from('users').insert({
+        id: data.user.id,
+        name,
+        phone,
+        email: email || '',
+        city: city || '',
+        role,
+      }).maybeSingle()
+      setUser({ id: data.user.id, name, phone, email, city, role })
+    }
+    return data
   }
 
-  const logout = () => {
+  const logout = async () => {
+    clearMockData()
     setUser(null)
-    localStorage.removeItem(STORAGE_KEY)
+    await supabase.auth.signOut()
   }
 
   const switchRole = (role) => {
     if (!user) return
-    saveUser({ ...user, role })
+    setUser({ ...user, role })
   }
 
   return (

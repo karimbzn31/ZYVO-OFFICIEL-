@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Star, ThumbsUp, MessageCircle, Calendar, ChevronDown, Filter,
   AlertCircle, TrendingUp, BarChart3
 } from 'lucide-react'
-import { reviews, extendedProviders } from '../../../data/dashboardData'
+import { getReviews } from '../../../lib/supabase'
 import { useLoading } from '../../../hooks/useLoading'
 import { ListSkeleton } from '../../../components/dashboard/Skeleton'
 
@@ -13,19 +13,17 @@ export default function ProviderAvis() {
   const { provider } = useOutletContext()
   const loading = useLoading(350)
   const [sortBy, setSortBy] = useState('recent')
+  const [myReviews, setMyReviews] = useState([])
+  const [fetching, setFetching] = useState(true)
 
-  const myReviews = useMemo(() => {
-    if (!provider) return []
-    return reviews.filter(r => r.providerId === provider.id)
-  }, [provider])
-
-  const sorted = useMemo(() => {
-    const r = [...myReviews]
-    if (sortBy === 'recent') return r
-    if (sortBy === 'best') return r.sort((a, b) => b.rating - a.rating)
-    if (sortBy === 'popular') return r.sort((a, b) => b.likes - a.likes)
-    return r
-  }, [myReviews, sortBy])
+  useEffect(() => {
+    if (!provider) return
+    setFetching(true)
+    getReviews(provider.id, { sort: sortBy })
+      .then(data => setMyReviews(data || []))
+      .catch(() => setMyReviews([]))
+      .finally(() => setFetching(false))
+  }, [provider, sortBy])
 
   const avgRating = myReviews.length > 0
     ? (myReviews.reduce((sum, r) => sum + r.rating, 0) / myReviews.length).toFixed(1)
@@ -37,9 +35,9 @@ export default function ProviderAvis() {
     return dist
   }, [myReviews])
 
-  const totalLikes = myReviews.reduce((sum, r) => sum + r.likes, 0)
+  const totalLikes = myReviews.reduce((sum, r) => sum + (r.likes || 0), 0)
 
-  if (loading) {
+  if (loading || fetching) {
     return (
       <div className="space-y-4">
         <div className="h-6 w-32 rounded bg-white/5 animate-pulse" />
@@ -102,7 +100,7 @@ export default function ProviderAvis() {
         {[
           { key: 'recent', label: 'Récents' },
           { key: 'best', label: 'Meilleurs' },
-          { key: 'popular', label: 'Populaires' },
+          { key: 'worst', label: 'Moins bons' },
         ].map(s => (
           <button
             key={s.key}
@@ -117,7 +115,7 @@ export default function ProviderAvis() {
       </div>
 
       {/* Reviews list */}
-      {sorted.length === 0 ? (
+      {myReviews.length === 0 ? (
         <div className="text-center py-12">
           <Star className="w-10 h-10 text-zyvo-muted/20 mx-auto mb-3" />
           <p className="font-bold text-white">Aucun avis pour le moment</p>
@@ -125,7 +123,7 @@ export default function ProviderAvis() {
         </div>
       ) : (
         <div className="space-y-3">
-          {sorted.map((r, i) => (
+          {myReviews.map((r, i) => (
             <motion.div
               key={r.id}
               initial={{ opacity: 0, y: 12 }}
@@ -135,11 +133,11 @@ export default function ProviderAvis() {
             >
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-xs font-bold text-white shrink-0">
-                  {r.userAvatar}
+                  {r.client?.name?.[0] || r.client_id?.[0] || '?'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-bold text-sm text-white">{r.userName}</p>
+                    <p className="font-bold text-sm text-white">{r.client?.name || 'Client'}</p>
                     <div className="flex items-center gap-0.5">
                       {[1,2,3,4,5].map(i => (
                         <Star key={i} className={`w-2.5 h-2.5 ${i <= r.rating ? 'text-amber-400 fill-amber-400' : 'text-zyvo-muted/30'}`} strokeWidth={0} />
@@ -148,8 +146,8 @@ export default function ProviderAvis() {
                   </div>
                   <p className="text-xs text-zyvo-muted mt-1">{r.comment}</p>
                   <div className="flex items-center gap-3 mt-2 text-[10px] text-zyvo-muted/60">
-                    <span className="flex items-center gap-0.5"><Calendar className="w-3 h-3" /> {r.date}</span>
-                    <span className="flex items-center gap-0.5"><ThumbsUp className="w-3 h-3" /> {r.likes}</span>
+                    <span className="flex items-center gap-0.5"><Calendar className="w-3 h-3" /> {new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    <span className="flex items-center gap-0.5"><ThumbsUp className="w-3 h-3" /> {r.likes || 0}</span>
                   </div>
                 </div>
               </div>
