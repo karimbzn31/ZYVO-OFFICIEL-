@@ -65,24 +65,26 @@ export function AuthProvider({ children }) {
     })
     if (error) throw error
     if (data.user) {
-      await supabase.from('users').insert({
+      const { error: uErr } = await supabase.from('users').insert({
         id: data.user.id,
         name,
         phone,
         email: email || '',
         city: city || '',
         role,
-      }).maybeSingle()
+      }).select().single()
+      if (uErr) throw uErr
 
       if (role === 'prestataire') {
-        await supabase.from('providers').insert({
+        const { error: pErr } = await supabase.from('providers').insert({
           user_id: data.user.id,
           name,
           city: city || '',
           service: 'Mon service',
           category: '',
           cover_gradient: 'from-blue-600 via-blue-500 to-cyan-400',
-        }).maybeSingle()
+        }).select().single()
+        if (pErr) throw pErr
       }
 
       setUser({ id: data.user.id, name, phone, email, city, role })
