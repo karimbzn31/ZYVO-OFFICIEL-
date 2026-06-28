@@ -121,18 +121,48 @@ export default function ProviderLayout() {
   }, [user])
 
   const provider = useMemo(() => {
-    if (!supabaseProvider) return null
-    try {
-      const raw = localStorage.getItem('zyvo_provider_edits')
-      if (raw) {
-        const edits = JSON.parse(raw)
-        if (edits[supabaseProvider.id]) {
-          return { ...supabaseProvider, ...edits[supabaseProvider.id] }
+    // Try Supabase provider first
+    if (supabaseProvider) {
+      try {
+        const raw = localStorage.getItem('zyvo_provider_edits')
+        if (raw) {
+          const edits = JSON.parse(raw)
+          if (edits[supabaseProvider.id]) {
+            return { ...supabaseProvider, ...edits[supabaseProvider.id] }
+          }
         }
+      } catch {}
+      return supabaseProvider
+    }
+    // Fallback: create minimal provider from user data (newly registered)
+    if (user && user.role === 'prestataire') {
+      return {
+        id: user.id || 'new',
+        name: user.name || 'Prestataire',
+        service: 'Mon service',
+        city: user.city || '',
+        category: '',
+        description: '',
+        rating: 0,
+        missions: 0,
+        likes: 0,
+        response_rate: '-',
+        response_time: '-',
+        coverGradient: 'from-blue-600 via-blue-500 to-cyan-400',
+        price: '-',
+        priceValue: 0,
+        badges: [],
+        gallery: [],
+        verified_documents: [],
+        languages: [],
+        availabilityDays: [],
+        availabilityFrom: '08:00',
+        availabilityTo: '17:00',
+        zones: [],
       }
-    } catch {}
-    return supabaseProvider
-  }, [supabaseProvider])
+    }
+    return null
+  }, [supabaseProvider, user])
 
   const badgeCounts = useMemo(() => ({
     messages: chatMessages.filter(c => c.unread > 0).length,

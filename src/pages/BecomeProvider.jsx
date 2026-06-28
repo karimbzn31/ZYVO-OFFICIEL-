@@ -191,25 +191,25 @@ function StepServices({ form, setForm, errors }) {
 
       <Field label="Services proposés *" error={errors.services}>
         <div className="grid sm:grid-cols-2 gap-2">
-          {serviceOptions.map(s => {
-            const selected = form.services.includes(s.value)
-            return (
-              <button key={s.value} type="button" onClick={() => toggleService(s.value)}
-                className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
-                  selected
-                    ? 'bg-zyvo-gold/10 border-zyvo-gold/30'
-                    : 'bg-white/5 border-white/5 hover:border-white/20'
-                }`}>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  selected ? 'gradient-brand' : 'bg-white/5'
-                }`}>
-                  <s.icon className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-sm font-semibold text-white">{s.label}</span>
-                {selected && <CheckCircle className="w-4 h-4 text-zyvo-gold ml-auto shrink-0" />}
-              </button>
-            )
-          })}
+{serviceOptions.map(({ value: sv, label: sl, icon: Icon }) => {
+  const selected = form.services.includes(sv)
+  return (
+    <button key={sv} type="button" onClick={() => toggleService(sv)}
+      className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
+        selected
+          ? 'bg-zyvo-gold/10 border-zyvo-gold/30'
+          : 'bg-white/5 border-white/5 hover:border-white/20'
+      }`}>
+      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+        selected ? 'gradient-brand' : 'bg-white/5'
+      }`}>
+        <Icon className="w-4 h-4 text-white" />
+      </div>
+      <span className="text-sm font-semibold text-white">{sl}</span>
+      {selected && <CheckCircle className="w-4 h-4 text-zyvo-gold ml-auto shrink-0" />}
+    </button>
+  )
+})}
         </div>
       </Field>
 

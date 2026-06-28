@@ -444,11 +444,11 @@ export default function ProviderProfil() {
               { icon: Clock, value: provider.missions, label: 'Missions', color: 'text-blue-400' },
               { icon: ShieldCheck, value: provider.response_rate, label: 'Réponse', color: 'text-emerald-400' },
               { icon: DollarSign, value: editing ? form.price : provider.price, label: 'Tarif', color: 'text-zyvo-gold' },
-            ].map(s => (
-              <div key={s.label} className="text-center">
-                <s.icon className={`w-4 h-4 ${s.color} mx-auto mb-1`} strokeWidth={1.5} />
-                <p className={`text-xs font-bold ${s.color}`}>{s.value}</p>
-                <p className="text-[9px] text-zyvo-muted">{s.label}</p>
+            ].map(({ icon: Icon, value: val, label: lbl, color: clr }) => (
+              <div key={lbl} className="text-center">
+                <Icon className={`w-4 h-4 ${clr} mx-auto mb-1`} strokeWidth={1.5} />
+                <p className={`text-xs font-bold ${clr}`}>{val}</p>
+                <p className="text-[9px] text-zyvo-muted">{lbl}</p>
               </div>
             ))}
           </div>
