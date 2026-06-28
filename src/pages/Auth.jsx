@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, Briefcase, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '../context/auth'
 import { useToast } from '../context/toast'
 
@@ -53,9 +53,7 @@ function CitySelect({ value, onChange }) {
 }
 
 export default function Auth() {
-  const [step, setStep] = useState(0)
   const [mode, setMode] = useState('register')
-  const [selectedRole, setSelectedRole] = useState(null)
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
@@ -70,22 +68,6 @@ export default function Auth() {
   const { addToast } = useToast()
   const navigate = useNavigate()
 
-  function pickRole(role) {
-    setSelectedRole(role)
-    if (role === 'prestataire') setMode('login')
-    else setMode('register')
-    setError('')
-    setStep(1)
-  }
-
-  function backToRoles() {
-    setSelectedRole(null)
-    setStep(0)
-    setError('')
-  }
-
-  const getRedirect = () => selectedRole === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client'
-
   const handleRegister = async (e) => {
     e.preventDefault()
     setError('')
@@ -97,15 +79,15 @@ export default function Auth() {
       setError('Le mot de passe doit contenir au moins 6 caractères')
       return
     }
-    if (selectedRole !== 'prestataire' && !city) {
+    if (!city) {
       setError('Veuillez sélectionner votre ville')
       return
     }
     setSubmitting(true)
     try {
-      await register({ name: name.trim(), phone, email: email.trim(), city: city || '', role: selectedRole || 'client', password })
+      await register({ name: name.trim(), phone, email: email.trim(), city, role: 'client', password })
       addToast('Compte créé avec succès', { message: 'Bienvenue sur Zyvo !', type: 'success' })
-      navigate(getRedirect())
+      navigate('/dashboard/client')
     } catch (err) {
       setError(err.message || 'Erreur lors de l\'inscription')
     } finally {
@@ -122,58 +104,14 @@ export default function Auth() {
     }
     setSubmitting(true)
     try {
-      await login(loginEmail.trim(), loginPassword.trim(), selectedRole || 'client')
+      await login(loginEmail.trim(), loginPassword.trim(), 'client')
       addToast('Connexion réussie', { message: 'Bon retour sur Zyvo !', type: 'success' })
-      navigate(getRedirect())
+      navigate('/dashboard/client')
     } catch (err) {
       setError(err.message || 'Email ou mot de passe incorrect')
     } finally {
       setSubmitting(false)
     }
-  }
-
-  if (step === 0) {
-    return (
-      <div className="py-8 max-w-sm mx-auto">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <Sparkles className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-2xl font-extrabold">Bienvenue sur Zyvo</h1>
-          <p className="text-sm text-zyvo-muted mt-1">Choisissez comment vous souhaitez utiliser Zyvo</p>
-        </div>
-
-        <div className="space-y-3">
-          <button
-            onClick={() => pickRole('client')}
-            className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
-          >
-            <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg">
-              <User className="w-6 h-6 text-white" strokeWidth={1.5} />
-            </div>
-            <div className="flex-1">
-              <div className="font-bold text-white text-base">Client</div>
-              <div className="text-xs text-zyvo-muted mt-0.5">Je cherche un service près de chez moi</div>
-            </div>
-            <ArrowRight className="w-5 h-5 text-zyvo-muted group-hover:text-zyvo-gold transition-colors" />
-          </button>
-
-          <button
-            onClick={() => pickRole('prestataire')}
-            className="flex items-center gap-4 w-full glass-premium rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20 card-hover"
-          >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-600 to-orange-500 flex items-center justify-center shrink-0 shadow-lg">
-              <Briefcase className="w-6 h-6 text-white" strokeWidth={1.5} />
-            </div>
-            <div className="flex-1">
-              <div className="font-bold text-white text-base">Prestataire</div>
-              <div className="text-xs text-zyvo-muted mt-0.5">Je propose mes services aux clients</div>
-            </div>
-            <ArrowRight className="w-5 h-5 text-zyvo-muted group-hover:text-zyvo-gold transition-colors" />
-          </button>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -187,17 +125,8 @@ export default function Auth() {
           {mode === 'login' ? 'Bon retour' : 'Créer un compte'}
         </h1>
         <p className="text-sm text-zyvo-muted mt-1">
-          {mode === 'login'
-            ? `Connectez-vous en tant que ${selectedRole === 'prestataire' ? 'prestataire' : 'client'}`
-            : `Rejoignez Zyvo en tant que ${selectedRole === 'prestataire' ? 'prestataire' : 'client'}`}
+          {mode === 'login' ? 'Connectez-vous à votre compte client' : 'Rejoignez Zyvo en tant que client'}
         </p>
-        <button
-          type="button"
-          onClick={backToRoles}
-          className="text-xs text-zyvo-muted hover:text-white transition-colors mt-2 flex items-center justify-center gap-1 mx-auto"
-        >
-          <ChevronLeft className="w-3 h-3" /> Changer de rôle
-        </button>
       </div>
 
       {error && (
@@ -331,25 +260,28 @@ export default function Auth() {
 
       <div className="text-center mt-6">
         <p className="text-sm text-zyvo-muted">
-          {selectedRole === 'prestataire' ? (
-            <>Pas encore de compte prestataire ?{' '}
-              <Link to="/become-provider" className="text-zyvo-gold font-bold hover:underline">
-                Créer un compte
-              </Link>
-            </>
-          ) : mode === 'login' ? (
+          {mode === 'login' ? (
             <>Pas encore de compte ?{' '}
-              <button type="button" onClick={() => { setMode('register'); setError('') }} className="text-zyvo-gold font-bold hover:underline">
+              <button type="button" onClick={() => { setMode('register'); setError(''); setName(''); setPhone(''); setEmail(''); setPassword(''); setCity('') }} className="text-zyvo-gold font-bold hover:underline">
                 Créer un compte
               </button>
             </>
           ) : (
             <>Déjà inscrit ?{' '}
-              <button type="button" onClick={() => setMode('login')} className="text-zyvo-gold font-bold hover:underline">
+              <button type="button" onClick={() => { setMode('login'); setError(''); setLoginEmail(''); setLoginPassword('') }} className="text-zyvo-gold font-bold hover:underline">
                 Se connecter
               </button>
             </>
           )}
+        </p>
+      </div>
+
+      <div className="text-center mt-3">
+        <p className="text-xs text-zyvo-muted">
+          Vous êtes un professionnel ?{' '}
+          <Link to="/become-provider" className="text-zyvo-gold font-bold hover:underline">
+            Créer un compte prestataire
+          </Link>
         </p>
       </div>
 
