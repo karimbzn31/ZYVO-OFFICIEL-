@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase, sendMagicLink } from '../lib/supabase'
 
 const AuthContext = createContext(null)
 
@@ -104,7 +104,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, switchRole }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, switchRole, sendMagicLink }}>
       {children}
     </AuthContext.Provider>
   )

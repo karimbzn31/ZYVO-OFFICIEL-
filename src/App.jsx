@@ -1,5 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect, lazy, Suspense } from 'react'
+import AuthCallback from './pages/AuthCallback'
+import CompleteProfile from './pages/CompleteProfile'
 import { motion } from 'framer-motion'
 import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './context/auth'
@@ -120,6 +122,8 @@ function AppContent() {
                 <Route path="/favorites" element={<Favorites />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/auth/complete-profile" element={<CompleteProfile />} />
                 <Route path="/provider/:id" element={<ProviderDetail />} />
                 <Route path="/provider/dashboard" element={<ProviderDashboard />} />
                 <Route path="/messages" element={<Messages />} />
