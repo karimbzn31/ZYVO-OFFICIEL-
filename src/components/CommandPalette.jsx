@@ -103,16 +103,16 @@ export default function CommandPalette() {
               Aucun résultat pour "{query}"
             </div>
           ) : (
-            filtered.map((cmd, i) => (
+            filtered.map(({ icon: CmdIcon, label, to }, i) => (
               <button
-                key={cmd.to}
-                onClick={() => handleSelect(cmd)}
+                key={to}
+                onClick={() => handleSelect({ to, label, icon: CmdIcon })}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all ${
                   i === selected ? 'bg-white/10 text-white' : 'text-zyvo-muted hover:text-white hover:bg-white/5'
                 }`}
               >
-                <cmd.icon className="w-4 h-4" strokeWidth={1.5} />
-                <span className="flex-1 text-sm font-semibold">{cmd.label}</span>
+                <CmdIcon className="w-4 h-4" strokeWidth={1.5} />
+                <span className="flex-1 text-sm font-semibold">{label}</span>
                 <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
             ))

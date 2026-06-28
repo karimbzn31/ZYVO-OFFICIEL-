@@ -92,17 +92,17 @@ export default function Contact() {
 
         {/* INFO */}
         <div className="space-y-4">
-          {contactMethods.map((m) => (
-            <div key={m.title} className="glass-premium rounded-2xl p-5 card-hover flex items-center gap-4">
+          {contactMethods.map(({ icon: ContactIcon, title, value, href }) => (
+            <div key={title} className="glass-premium rounded-2xl p-5 card-hover flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg">
-                <m.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+                <ContactIcon className="w-6 h-6 text-white" strokeWidth={1.5} />
               </div>
               <div>
-                <div className="text-xs text-zyvo-muted">{m.title}</div>
-                {m.href ? (
-                  <a href={m.href} className="font-bold text-white hover:text-zyvo-gold transition-colors">{m.value}</a>
+                <div className="text-xs text-zyvo-muted">{title}</div>
+                {href ? (
+                  <a href={href} className="font-bold text-white hover:text-zyvo-gold transition-colors">{value}</a>
                 ) : (
-                  <div className="font-bold text-white">{m.value}</div>
+                  <div className="font-bold text-white">{value}</div>
                 )}
               </div>
             </div>

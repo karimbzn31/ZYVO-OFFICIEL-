@@ -699,13 +699,13 @@ export default function ProviderProfil() {
             { icon: Mail, label: 'Email', value: user?.email || 'Non renseigné' },
             { icon: Phone, label: 'Téléphone', value: user?.phone || 'Non renseigné' },
             { icon: MapPin, label: 'Ville', value: provider.city },
-          ].map(info => (
-            <div key={info.label} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+          ].map(({ icon: InfoIcon, label, value }) => (
+            <div key={label} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
               <div className="flex items-center gap-2">
-                <info.icon className="w-3 h-3 text-zyvo-muted" />
-                <span className="text-xs text-zyvo-muted">{info.label}</span>
+                <InfoIcon className="w-3 h-3 text-zyvo-muted" />
+                <span className="text-xs text-zyvo-muted">{label}</span>
               </div>
-              <span className="text-xs font-semibold text-white">{info.value}</span>
+              <span className="text-xs font-semibold text-white">{value}</span>
             </div>
           ))}
         </div>

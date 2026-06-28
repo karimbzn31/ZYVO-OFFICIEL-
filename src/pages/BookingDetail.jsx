@@ -26,7 +26,7 @@ export default function BookingDetail() {
     )
   }
 
-  const status = statusConfig[booking.status] || statusConfig['En attente']
+  const { icon: StatusIcon, ...status } = statusConfig[booking.status] || statusConfig['En attente']
 
   return (
     <div className="py-8 max-w-3xl mx-auto">
@@ -42,7 +42,7 @@ export default function BookingDetail() {
             <p className="text-sm text-zyvo-muted mt-1">Mission de {booking.provider.service}</p>
           </div>
           <div className={`${status.bg} ${status.color} px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2`}>
-            <status.icon className="w-4 h-4" /> {booking.status}
+            <StatusIcon className="w-4 h-4" /> {booking.status}
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -51,12 +51,12 @@ export default function BookingDetail() {
             { icon: Clock, label: 'Heure', value: booking.time },
             { icon: MapPin, label: 'Adresse', value: booking.provider.city },
             { icon: Phone, label: 'Contact', value: booking.provider.name },
-          ].map((item) => (
-            <div key={item.label} className="bg-white/5 rounded-xl p-3">
+          ].map(({ icon: DetailIcon, label, value }) => (
+            <div key={label} className="bg-white/5 rounded-xl p-3">
               <div className="flex items-center gap-1.5 text-xs text-zyvo-muted mb-1">
-                <item.icon className="w-3 h-3" /> {item.label}
+                <DetailIcon className="w-3 h-3" /> {label}
               </div>
-              <div className="text-sm font-semibold text-white">{item.value}</div>
+              <div className="text-sm font-semibold text-white">{value}</div>
             </div>
           ))}
         </div>

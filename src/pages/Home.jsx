@@ -329,20 +329,20 @@ export default function Home() {
               onTouchStart={() => setCarouselPaused(true)}
               onTouchEnd={() => setTimeout(() => setCarouselPaused(false), 4000)}
             >
-              {services.map((s) => (
-                <div key={s.title} className="snap-start shrink-0 w-44 h-[235px] sm:h-auto sm:w-auto" data-svc-card>
+              {services.map(({ icon: SvcIcon, title, desc, bg, gradient: grad }) => (
+                <div key={title} className="snap-start shrink-0 w-44 h-[235px] sm:h-auto sm:w-auto" data-svc-card>
                   <TiltCard className="h-full">
                     <Link
                       to="/search"
                       className="group relative overflow-hidden glass-premium rounded-2xl p-4 sm:p-5 card-hover block h-full flex flex-col"
                     >
-                      <div className={`absolute -top-8 -right-8 w-20 h-20 bg-gradient-to-br ${s.gradient} rounded-full blur-2xl opacity-10 group-hover:opacity-25 transition-opacity`} />
+                      <div className={`absolute -top-8 -right-8 w-20 h-20 bg-gradient-to-br ${grad} rounded-full blur-2xl opacity-10 group-hover:opacity-25 transition-opacity`} />
                       <div className="relative z-10 flex flex-col h-full">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${s.bg} flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform shrink-0`}>
-                          <s.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={1.5} />
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${bg} flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform shrink-0`}>
+                          <SvcIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" strokeWidth={1.5} />
                         </div>
-                        <h3 className="font-bold text-sm sm:text-base text-white leading-tight min-h-[2.5rem]">{s.title}</h3>
-                        <p className="text-xs text-zyvo-muted leading-relaxed mt-1 line-clamp-2 flex-1">{s.desc}</p>
+                        <h3 className="font-bold text-sm sm:text-base text-white leading-tight min-h-[2.5rem]">{title}</h3>
+                        <p className="text-xs text-zyvo-muted leading-relaxed mt-1 line-clamp-2 flex-1">{desc}</p>
                       </div>
                     </Link>
                   </TiltCard>
@@ -430,18 +430,18 @@ export default function Home() {
             { icon: ShieldCheck, title: '100% Vérifié', desc: 'Chaque prestataire est vérifié manuellement par notre équipe. Identité, compétences et avis — rien n\'est laissé au hasard.', gradient: 'from-emerald-500 to-teal-400', stat: '500+', statLabel: 'Pros vérifiés' },
             { icon: Star, title: 'Avis Authentiques', desc: 'Seuls les clients ayant réellement réservé peuvent laisser un avis. Pas de faux avis, pas de notes truquées.', gradient: 'from-amber-500 to-orange-400', stat: '4.7/5', statLabel: 'Note moyenne' },
             { icon: MessageCircle, title: 'Support 7j/7', desc: 'Notre équipe est disponible tous les jours par WhatsApp. Un problème ? On répond en moins de 30 minutes.', gradient: 'from-blue-500 to-cyan-400', stat: '< 30 min', statLabel: 'Temps de réponse' },
-          ].map((item) => (
-            <div key={item.title} className={`glass-premium rounded-3xl p-6 card-hover relative overflow-hidden ${visible.pourquoi ? 'animate-fade-in-up' : 'opacity-0'}`}>
-              <div className={`absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br ${item.gradient} rounded-full blur-3xl opacity-10`} />
+          ].map(({ icon: WhyIcon, title, desc, gradient, stat, statLabel }) => (
+            <div key={title} className={`glass-premium rounded-3xl p-6 card-hover relative overflow-hidden ${visible.pourquoi ? 'animate-fade-in-up' : 'opacity-0'}`}>
+              <div className={`absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br ${gradient} rounded-full blur-3xl opacity-10`} />
               <div className="relative z-10">
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-4 shadow-lg`}>
-                  <item.icon className="w-7 h-7 text-white" strokeWidth={1.5} />
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 shadow-lg`}>
+                  <WhyIcon className="w-7 h-7 text-white" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-lg font-extrabold text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-zyvo-muted leading-relaxed mb-4">{item.desc}</p>
+                <h3 className="text-lg font-extrabold text-white mb-2">{title}</h3>
+                <p className="text-sm text-zyvo-muted leading-relaxed mb-4">{desc}</p>
                 <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                  <span className="text-2xl font-extrabold gradient-text">{item.stat}</span>
-                  <span className="text-xs text-zyvo-muted">{item.statLabel}</span>
+                  <span className="text-2xl font-extrabold gradient-text">{stat}</span>
+                  <span className="text-xs text-zyvo-muted">{statLabel}</span>
                 </div>
               </div>
             </div>
@@ -549,14 +549,14 @@ export default function Home() {
               { icon: Star, step: '2', title: 'Je compare', desc: 'Consultez les notes, les avis et choisissez le meilleur profil' },
               { icon: Calendar, step: '3', title: 'Je réserve', desc: 'Choisissez votre créneau et confirmez en un clic' },
               { icon: ThumbsUp, step: '4', title: 'Le pro arrive', desc: 'Votre prestataire arrive à l\'heure. Profitez du service !' },
-            ].map((s) => (
-              <div key={s.step} className="glass-premium rounded-2xl p-6 text-center card-hover">
+            ].map(({ icon: StepIcon, step, title, desc }) => (
+              <div key={step} className="glass-premium rounded-2xl p-6 text-center card-hover">
                 <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <s.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+                  <StepIcon className="w-6 h-6 text-white" strokeWidth={1.5} />
                 </div>
-                <span className="text-xs font-bold text-zyvo-gold">Étape {s.step}</span>
-                <h3 className="font-bold text-white text-lg mt-1">{s.title}</h3>
-                <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{s.desc}</p>
+                <span className="text-xs font-bold text-zyvo-gold">Étape {step}</span>
+                <h3 className="font-bold text-white text-lg mt-1">{title}</h3>
+                <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -567,14 +567,14 @@ export default function Home() {
               { icon: Layers, step: '2', title: 'Je crée mon profil', desc: 'Ajoutez vos services, photos et tarifs pour séduire les clients' },
               { icon: MessageCircle, step: '3', title: 'Je reçois des demandes', desc: 'Les clients vous contactent et réservent directement' },
               { icon: Award, step: '4', title: 'Je suis payé', desc: 'Vous gardez 90% du montant. Paiement direct par le client' },
-            ].map((s) => (
-              <div key={s.step} className="glass-premium rounded-2xl p-6 text-center card-hover">
+            ].map(({ icon: StepIcon, step, title, desc }) => (
+              <div key={step} className="glass-premium rounded-2xl p-6 text-center card-hover">
                 <div className="w-12 h-12 rounded-xl gradient-warm flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <s.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+                  <StepIcon className="w-6 h-6 text-white" strokeWidth={1.5} />
                 </div>
-                <span className="text-xs font-bold text-zyvo-gold">Étape {s.step}</span>
-                <h3 className="font-bold text-white text-lg mt-1">{s.title}</h3>
-                <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{s.desc}</p>
+                <span className="text-xs font-bold text-zyvo-gold">Étape {step}</span>
+                <h3 className="font-bold text-white text-lg mt-1">{title}</h3>
+                <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -603,13 +603,13 @@ export default function Home() {
                 { icon: ShieldCheck, title: 'Identité vérifiée', desc: 'CNI ou passeport valide + numéro de téléphone actif. Aucun anonymat.', color: 'from-blue-500 to-cyan-400' },
                 { icon: Award, title: 'Compétences validées', desc: 'Portfolio, test pratique ou recommandations clients. Nous ne laissons rien au hasard.', color: 'from-purple-500 to-violet-400' },
                 { icon: Star, title: 'Avis après chaque mission', desc: 'Seuls les clients ayant réellement réservé peuvent laisser un avis. 100% authentique.', color: 'from-amber-500 to-orange-400' },
-              ].map((item) => (
-                <div key={item.title} className="text-center p-6 card-hover">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                    <item.icon className="w-8 h-8 text-white" strokeWidth={1.5} />
+              ].map(({ icon: CheckIcon, title, desc, color }) => (
+                <div key={title} className="text-center p-6 card-hover">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                    <CheckIcon className="w-8 h-8 text-white" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-bold text-white text-lg mb-2">{item.title}</h3>
-                  <p className="text-sm text-zyvo-muted leading-relaxed">{item.desc}</p>
+                  <h3 className="font-bold text-white text-lg mb-2">{title}</h3>
+                  <p className="text-sm text-zyvo-muted leading-relaxed">{desc}</p>
                 </div>
               ))}
             </div>
@@ -677,13 +677,13 @@ export default function Home() {
                 { icon: ShieldCheck, title: 'Vérification manuelle', desc: 'Chaque prestataire est vérifié par notre équipe avant de pouvoir proposer ses services' },
                 { icon: Star, title: 'Avis authentiques', desc: 'Seuls les clients ayant réellement réservé peuvent laisser un avis. Zéro faux avis.' },
                 { icon: MessageCircle, title: 'Support WhatsApp 7j/7', desc: 'Notre équipe est disponible tous les jours par WhatsApp pour vous assister' },
-              ].map((item, i) => (
-                <div key={item.title} className="text-center p-6 card-hover" style={{ animationDelay: `${i * 0.15}s` }}>
+              ].map(({ icon: VerifyIcon, title, desc }, i) => (
+                <div key={title} className="text-center p-6 card-hover" style={{ animationDelay: `${i * 0.15}s` }}>
                   <div className="w-16 h-16 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <item.icon className="w-8 h-8 text-white" strokeWidth={1.5} />
+                    <VerifyIcon className="w-8 h-8 text-white" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-bold text-lg mb-2 text-white">{item.title}</h3>
-                  <p className="text-sm text-zyvo-muted leading-relaxed">{item.desc}</p>
+                  <h3 className="font-bold text-lg mb-2 text-white">{title}</h3>
+                  <p className="text-sm text-zyvo-muted leading-relaxed">{desc}</p>
                 </div>
               ))}
             </div>

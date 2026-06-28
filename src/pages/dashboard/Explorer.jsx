@@ -279,18 +279,18 @@ export default function Explorer() {
 
       {/* Category Chips */}
       <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-        {categories.map(c => (
+        {categories.map(({ key, label, icon: Icon }) => (
           <button
-            key={c.key}
-            onClick={() => setSelectedCategory(c.key)}
+            key={key}
+            onClick={() => setSelectedCategory(key)}
             className={"flex items-center gap-1 px-3 py-1.5 rounded-xl text-[10px] font-semibold transition-all whitespace-nowrap shrink-0 ".concat(
-              selectedCategory === c.key
+              selectedCategory === key
                 ? 'bg-zyvo-gold/15 text-zyvo-gold border border-zyvo-gold/25 shadow-sm shadow-zyvo-gold/5'
                 : 'bg-white/5 text-zyvo-muted hover:text-white hover:bg-white/10 border border-transparent'
             )}
           >
-            <c.icon className="w-3 h-3" />
-            {c.label}
+            <Icon className="w-3 h-3" />
+            {label}
           </button>
         ))}
       </div>

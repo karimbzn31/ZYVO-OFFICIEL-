@@ -87,15 +87,15 @@ export default function Legal() {
       </div>
 
       <div className="space-y-4">
-        {sections.map((s) => (
-          <div key={s.title} className="glass-premium rounded-2xl p-6 card-hover">
+        {sections.map(({ icon: LegalIcon, title, content }) => (
+          <div key={title} className="glass-premium rounded-2xl p-6 card-hover">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg mt-0.5">
-                <s.icon className="w-5 h-5 text-white" strokeWidth={1.5} />
+                <LegalIcon className="w-5 h-5 text-white" strokeWidth={1.5} />
               </div>
               <div>
-                <h2 className="font-bold text-white text-lg mb-2">{s.title}</h2>
-                <p className="text-sm text-zyvo-muted leading-relaxed">{s.content}</p>
+                <h2 className="font-bold text-white text-lg mb-2">{title}</h2>
+                <p className="text-sm text-zyvo-muted leading-relaxed">{content}</p>
               </div>
             </div>
           </div>

@@ -36,17 +36,17 @@ export default function HowItWorks() {
         Pour les clients
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-14">
-        {clientSteps.map((s, i) => (
-          <div key={s.title} className="glass-premium rounded-2xl p-6 card-hover flex gap-4">
+        {clientSteps.map(({ icon: StepIcon, title, desc }, i) => (
+          <div key={title} className="glass-premium rounded-2xl p-6 card-hover flex gap-4">
             <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg">
-              <s.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+              <StepIcon className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-bold text-zyvo-gold">Étape {i + 1}</span>
               </div>
-              <h3 className="font-bold text-white text-lg">{s.title}</h3>
-              <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{s.desc}</p>
+              <h3 className="font-bold text-white text-lg">{title}</h3>
+              <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{desc}</p>
             </div>
           </div>
         ))}
@@ -58,17 +58,17 @@ export default function HowItWorks() {
         Pour les prestataires
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-14">
-        {providerSteps.map((s, i) => (
-          <div key={s.title} className="glass-premium rounded-2xl p-6 card-hover flex gap-4">
+        {providerSteps.map(({ icon: StepIcon, title, desc }, i) => (
+          <div key={title} className="glass-premium rounded-2xl p-6 card-hover flex gap-4">
             <div className="w-12 h-12 rounded-xl gradient-warm flex items-center justify-center shrink-0 shadow-lg">
-              <s.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+              <StepIcon className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-bold text-zyvo-gold">Étape {i + 1}</span>
               </div>
-              <h3 className="font-bold text-white text-lg">{s.title}</h3>
-              <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{s.desc}</p>
+              <h3 className="font-bold text-white text-lg">{title}</h3>
+              <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{desc}</p>
             </div>
           </div>
         ))}

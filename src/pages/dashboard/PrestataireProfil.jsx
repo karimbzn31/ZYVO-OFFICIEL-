@@ -135,11 +135,11 @@ export default function PrestataireProfil() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {stats.map((s) => (
-          <div key={s.label} className="glass-premium rounded-2xl p-3 sm:p-4 text-center card-hover">
-            <s.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${s.color} mx-auto mb-1`} strokeWidth={1.5} />
-            <p className="text-lg sm:text-xl font-extrabold text-white">{s.value}</p>
-            <p className="text-[10px] sm:text-xs text-zyvo-muted">{s.label}</p>
+        {stats.map(({ icon: Icon, label, value, color }) => (
+          <div key={label} className="glass-premium rounded-2xl p-3 sm:p-4 text-center card-hover">
+            <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${color} mx-auto mb-1`} strokeWidth={1.5} />
+            <p className="text-lg sm:text-xl font-extrabold text-white">{value}</p>
+            <p className="text-[10px] sm:text-xs text-zyvo-muted">{label}</p>
           </div>
         ))}
       </div>

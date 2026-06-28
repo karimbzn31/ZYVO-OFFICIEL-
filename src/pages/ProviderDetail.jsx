@@ -262,11 +262,11 @@ export default function ProviderDetail() {
                 { label: 'Note', value: `${provider.rating}/5`, icon: Star },
                 { label: 'Membre depuis', value: '2025', icon: Calendar },
                 { label: 'Taux de réponse', value: '< 30 min', icon: Clock },
-              ].map((stat) => (
-                <div key={stat.label} className="glass-premium-light rounded-xl p-3 text-center">
-                  <stat.icon className="w-4 h-4 text-zyvo-gold mx-auto mb-1" strokeWidth={1.5} />
-                  <div className="text-sm font-bold text-white">{stat.value}</div>
-                  <div className="text-[10px] text-zyvo-muted mt-0.5">{stat.label}</div>
+              ].map(({ icon: StatIcon, label, value }) => (
+                <div key={label} className="glass-premium-light rounded-xl p-3 text-center">
+                  <StatIcon className="w-4 h-4 text-zyvo-gold mx-auto mb-1" strokeWidth={1.5} />
+                  <div className="text-sm font-bold text-white">{value}</div>
+                  <div className="text-[10px] text-zyvo-muted mt-0.5">{label}</div>
                 </div>
               ))}
             </div>

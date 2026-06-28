@@ -53,13 +53,13 @@ export default function About() {
         Nos <span className="gradient-text-brand">valeurs</span>
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-16">
-        {values.map((v) => (
-          <div key={v.title} className="glass-premium rounded-2xl p-6 card-hover">
+        {values.map(({ icon: ValIcon, title, desc }) => (
+          <div key={title} className="glass-premium rounded-2xl p-6 card-hover">
             <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center mb-4 shadow-lg">
-              <v.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+              <ValIcon className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
-            <h3 className="font-bold text-lg text-white mb-2">{v.title}</h3>
-            <p className="text-sm text-zyvo-muted leading-relaxed">{v.desc}</p>
+            <h3 className="font-bold text-lg text-white mb-2">{title}</h3>
+            <p className="text-sm text-zyvo-muted leading-relaxed">{desc}</p>
           </div>
         ))}
       </div>

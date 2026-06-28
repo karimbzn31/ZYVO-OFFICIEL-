@@ -78,11 +78,11 @@ export default function AdminDashboard() {
       {activeTab === 'overview' && (
         <>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {stats.map((s) => (
-              <div key={s.label} className={`${s.bg} rounded-2xl p-5 card-hover border border-white/5`}>
-                <s.icon className={`w-6 h-6 ${s.color} mb-3`} strokeWidth={1.5} />
-                <div className="text-2xl font-extrabold text-white">{s.value}</div>
-                <div className="text-xs text-zyvo-muted mt-1">{s.label}</div>
+            {stats.map(({ icon: StatIcon, label, value, color, bg }) => (
+              <div key={label} className={`${bg} rounded-2xl p-5 card-hover border border-white/5`}>
+                <StatIcon className={`w-6 h-6 ${color} mb-3`} strokeWidth={1.5} />
+                <div className="text-2xl font-extrabold text-white">{value}</div>
+                <div className="text-xs text-zyvo-muted mt-1">{label}</div>
               </div>
             ))}
           </div>

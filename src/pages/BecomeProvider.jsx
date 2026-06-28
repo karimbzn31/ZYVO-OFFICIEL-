@@ -594,10 +594,10 @@ export default function BecomeProvider() {
           { icon: ShieldCheck, label: 'Vérification 24h', color: 'text-emerald-400' },
           { icon: Users, label: '500+ prestataires', color: 'text-blue-400' },
           { icon: Star, label: 'Note 4.7/5', color: 'text-amber-400' },
-        ].map((item) => (
-          <div key={item.label} className="glass-premium rounded-xl p-4 text-center card-hover">
-            <item.icon className={`w-5 h-5 ${item.color} mx-auto mb-1.5`} />
-            <div className="text-xs font-bold text-white">{item.label}</div>
+        ].map(({ icon: TrustIcon, label, color }) => (
+          <div key={label} className="glass-premium rounded-xl p-4 text-center card-hover">
+            <TrustIcon className={`w-5 h-5 ${color} mx-auto mb-1.5`} />
+            <div className="text-xs font-bold text-white">{label}</div>
           </div>
         ))}
       </div>

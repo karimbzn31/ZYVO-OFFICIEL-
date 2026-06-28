@@ -78,12 +78,12 @@ export default function Support() {
 
       {/* CATEGORIES */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-10">
-        {categories.map((c) => (
-          <button key={c.label} className="glass-premium rounded-2xl p-4 text-center card-hover">
+        {categories.map(({ icon: CatIcon, label }) => (
+          <button key={label} className="glass-premium rounded-2xl p-4 text-center card-hover">
             <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center mx-auto mb-2 shadow-lg">
-              <c.icon className="w-5 h-5 text-white" strokeWidth={1.5} />
+              <CatIcon className="w-5 h-5 text-white" strokeWidth={1.5} />
             </div>
-            <span className="text-xs font-semibold text-zyvo-muted">{c.label}</span>
+            <span className="text-xs font-semibold text-zyvo-muted">{label}</span>
           </button>
         ))}
       </div>
@@ -96,21 +96,21 @@ export default function Support() {
             <p className="text-zyvo-muted">Aucun résultat pour "{search}"</p>
           </div>
         )}
-        {filtered.map((faq, i) => (
+        {filtered.map(({ icon: FaqIcon, q, r }, i) => (
           <div key={i} className="glass-premium rounded-2xl overflow-hidden card-hover">
             <button
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
               className="w-full flex items-center gap-4 p-5 text-left"
             >
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
-                <faq.icon className="w-5 h-5 text-zyvo-gold" strokeWidth={1.5} />
+                <FaqIcon className="w-5 h-5 text-zyvo-gold" strokeWidth={1.5} />
               </div>
-              <span className="flex-1 font-semibold text-white">{faq.q}</span>
+              <span className="flex-1 font-semibold text-white">{q}</span>
               <ChevronDown className={`w-5 h-5 text-zyvo-muted transition-transform ${openIndex === i ? 'rotate-180' : ''}`} />
             </button>
             {openIndex === i && (
               <div className="px-5 pb-5 pl-16">
-                <p className="text-sm text-zyvo-muted leading-relaxed">{faq.r}</p>
+                <p className="text-sm text-zyvo-muted leading-relaxed">{r}</p>
               </div>
             )}
           </div>

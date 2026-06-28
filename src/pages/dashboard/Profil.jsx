@@ -73,14 +73,14 @@ export default function Profil() {
 
       {/* Settings */}
       <div className="glass-premium rounded-2xl divide-y divide-white/5 overflow-hidden">
-        {settingsItems.map((item) => (
-          <button key={item.label} className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 text-left hover:bg-white/5 transition-all">
+        {settingsItems.map(({ icon: SetIcon, label, desc }) => (
+          <button key={label} className="w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 text-left hover:bg-white/5 transition-all">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
-              <item.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-zyvo-muted" />
+              <SetIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-zyvo-muted" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold text-white">{item.label}</p>
-              <p className="text-[10px] sm:text-xs text-zyvo-muted">{item.desc}</p>
+              <p className="text-xs sm:text-sm font-semibold text-white">{label}</p>
+              <p className="text-[10px] sm:text-xs text-zyvo-muted">{desc}</p>
             </div>
             <ChevronRight className="w-4 h-4 text-zyvo-muted shrink-0" />
           </button>

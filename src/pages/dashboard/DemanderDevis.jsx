@@ -41,17 +41,17 @@ function Select({ value, onChange, placeholder, options, icon: Icon }) {
       </button>
       {open && (
         <div className="absolute top-full left-0 right-0 mt-1 z-50 glass-premium rounded-xl border border-white/10 shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
-          {options.map(o => (
+          {options.map(({ icon: OptIcon, label, value: optVal }) => (
             <button
-              key={o.value}
+              key={optVal}
               type="button"
-              onClick={() => { onChange(o.value); setOpen(false) }}
+              onClick={() => { onChange(optVal); setOpen(false) }}
               className={`w-full flex items-center gap-3 text-left px-4 py-3 text-sm font-semibold transition-colors hover:bg-white/10 ${
-                value === o.value ? 'text-zyvo-gold bg-zyvo-gold/10' : 'text-white'
+                value === optVal ? 'text-zyvo-gold bg-zyvo-gold/10' : 'text-white'
               }`}
             >
-              {o.icon && <o.icon className="w-4 h-4 shrink-0" />}
-              {o.label}
+              {OptIcon && <OptIcon className="w-4 h-4 shrink-0" />}
+              {label}
             </button>
           ))}
         </div>
@@ -206,21 +206,21 @@ export default function DemanderDevis() {
             <div>
               <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Urgence</label>
               <div className="flex flex-wrap gap-2">
-                {urgencyOptions.map(o => (
-                  <button
-                    key={o.value}
-                    type="button"
-                    onClick={() => setUrgency(o.value)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
-                      urgency === o.value
-                        ? 'bg-zyvo-gold/20 text-zyvo-gold border border-zyvo-gold/30'
-                        : 'bg-white/5 text-zyvo-muted hover:text-white hover:bg-white/10 border border-transparent'
-                    }`}
-                  >
-                    <o.icon className="w-3.5 h-3.5" />
-                    {o.label}
-                  </button>
-                ))}
+                  {urgencyOptions.map(({ icon: UrgIcon, label, value: urgVal }) => (
+                    <button
+                      key={urgVal}
+                      type="button"
+                      onClick={() => setUrgency(urgVal)}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                        urgency === urgVal
+                          ? 'bg-zyvo-gold/20 text-zyvo-gold border border-zyvo-gold/30'
+                          : 'bg-white/5 text-zyvo-muted hover:text-white hover:bg-white/10 border border-transparent'
+                      }`}
+                    >
+                      <UrgIcon className="w-3.5 h-3.5" />
+                      {label}
+                    </button>
+                  ))}
               </div>
             </div>
 

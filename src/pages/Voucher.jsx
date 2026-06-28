@@ -153,13 +153,13 @@ export default function Voucher() {
           { icon: Heart, title: 'Un cadeau utile', desc: 'Tes proches choisissent ce dont ils ont vraiment besoin.' },
           { icon: ShieldCheck, title: 'Valable 12 mois', desc: 'Ils peuvent l\'utiliser quand ils veulent.' },
           { icon: Smartphone, title: 'Reçu par email', desc: 'Le bon cadeau est envoyé instantanément.' },
-        ].map((i) => (
-          <div key={i.title} className="glass-premium rounded-2xl p-4 text-center card-hover">
+        ].map(({ icon: VIcon, title, desc }) => (
+          <div key={title} className="glass-premium rounded-2xl p-4 text-center card-hover">
             <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center mx-auto mb-2 shadow-lg">
-              <i.icon className="w-5 h-5 text-white" strokeWidth={1.5} />
+              <VIcon className="w-5 h-5 text-white" strokeWidth={1.5} />
             </div>
-            <h3 className="font-bold text-sm text-white">{i.title}</h3>
-            <p className="text-xs text-zyvo-muted mt-1">{i.desc}</p>
+            <h3 className="font-bold text-sm text-white">{title}</h3>
+            <p className="text-xs text-zyvo-muted mt-1">{desc}</p>
           </div>
         ))}
       </div>

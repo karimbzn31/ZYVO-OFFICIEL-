@@ -63,17 +63,17 @@ export default function Refer() {
       {/* STEPS */}
       <h2 className="text-2xl font-extrabold mb-6">Comment ça marche</h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-12">
-        {steps.map((s, i) => (
-          <div key={s.title} className="glass-premium rounded-2xl p-5 card-hover flex gap-4">
+        {steps.map(({ icon: StepIcon, title, desc }, i) => (
+          <div key={title} className="glass-premium rounded-2xl p-5 card-hover flex gap-4">
             <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-lg">
-              <s.icon className="w-6 h-6 text-white" strokeWidth={1.5} />
+              <StepIcon className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-bold text-zyvo-gold">Étape {i + 1}</span>
               </div>
-              <h3 className="font-bold text-white">{s.title}</h3>
-              <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{s.desc}</p>
+              <h3 className="font-bold text-white">{title}</h3>
+              <p className="text-sm text-zyvo-muted mt-1 leading-relaxed">{desc}</p>
             </div>
           </div>
         ))}
