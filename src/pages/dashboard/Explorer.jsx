@@ -222,7 +222,7 @@ export default function Explorer() {
       case 'popular': result.sort((a, b) => b.likes - a.likes); break
     }
     return result
-  }, [searchQuery, selectedCategory, selectedCity, sortBy])
+  }, [providers, searchQuery, selectedCategory, selectedCity, sortBy])
 
   const activeFilters = [selectedCategory !== 'all', selectedCity !== '', searchQuery !== ''].filter(Boolean).length
 
