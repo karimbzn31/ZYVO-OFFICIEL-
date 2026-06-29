@@ -52,8 +52,14 @@ function CitySelect({ value, onChange }) {
   )
 }
 
+const roleOptions = [
+  { value: 'client', label: 'Client', desc: 'Trouver un prestataire', gradient: 'from-blue-600 via-blue-500 to-cyan-400' },
+  { value: 'prestataire', label: 'Prestataire', desc: 'Gérer mon activité', gradient: 'from-purple-600 via-purple-500 to-pink-400' },
+]
+
 export default function Auth() {
   const [mode, setMode] = useState('register')
+  const [loginRole, setLoginRole] = useState(null)
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [city, setCity] = useState('')
@@ -104,9 +110,9 @@ export default function Auth() {
     }
     setSubmitting(true)
     try {
-      await login(loginEmail.trim(), loginPassword.trim(), 'client')
+      await login(loginEmail.trim(), loginPassword.trim(), loginRole)
       addToast('Connexion réussie', { message: 'Bon retour sur Zyvo !', type: 'success' })
-      navigate('/dashboard/client')
+      navigate(loginRole === 'prestataire' ? '/dashboard/prestataire' : '/dashboard/client')
     } catch (err) {
       setError(err.message || 'Email ou mot de passe incorrect')
     } finally {
@@ -125,7 +131,11 @@ export default function Auth() {
           {mode === 'login' ? 'Bon retour' : 'Créer un compte'}
         </h1>
         <p className="text-sm text-zyvo-muted mt-1">
-          {mode === 'login' ? 'Connectez-vous à votre compte client' : 'Rejoignez Zyvo en tant que client'}
+          {mode === 'login'
+            ? loginRole === 'prestataire'
+              ? 'Connectez-vous à votre compte prestataire'
+              : 'Connectez-vous à votre compte'
+            : 'Rejoignez Zyvo en tant que client'}
         </p>
       </div>
 
@@ -137,47 +147,85 @@ export default function Auth() {
       )}
 
       {mode === 'login' ? (
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Email</label>
-            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
-              <Mail className="w-4 h-4 text-zyvo-muted shrink-0" />
-              <input
-                type="email"
-                placeholder="exemple@email.com"
-                value={loginEmail}
-                onChange={e => setLoginEmail(e.target.value)}
-                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-                required
-                autoFocus
-              />
-            </div>
-          </div>
-          <div>
-            <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Mot de passe</label>
-            <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
-              <Lock className="w-4 h-4 text-zyvo-muted shrink-0" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Votre mot de passe"
-                value={loginPassword}
-                onChange={e => setLoginPassword(e.target.value)}
-                className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
-                required
-              />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-zyvo-muted hover:text-white transition-colors">
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+        !loginRole ? (
+          <div className="space-y-3">
+            <p className="text-sm text-zyvo-muted text-center mb-4">Choisissez comment vous souhaitez vous connecter</p>
+            {roleOptions.map(r => (
+              <button
+                key={r.value}
+                type="button"
+                onClick={() => { setLoginRole(r.value); setError('') }}
+                className="w-full text-left glass-premium rounded-xl p-4 border border-transparent hover:border-white/10 transition-all hover:scale-[1.02]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${r.gradient} flex items-center justify-center shadow-lg`}>
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">{r.label}</p>
+                    <p className="text-xs text-zyvo-muted">{r.desc}</p>
+                  </div>
+                </div>
               </button>
-            </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => setLoginRole(null)}
+              className="flex items-center justify-center gap-1 text-xs text-zyvo-muted hover:text-white transition-colors mt-2 mx-auto"
+            >
+              <ChevronLeft className="w-3 h-3" /> Retour
+            </button>
           </div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100 transition-all duration-300 glow-worm flex items-center justify-center gap-2"
-          >
-            {submitting ? 'Connexion...' : 'Se connecter'} <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
+        ) : (
+          <form onSubmit={handleLogin} className="space-y-4">
+            <button
+              type="button"
+              onClick={() => setLoginRole(null)}
+              className="flex items-center gap-1 text-xs text-zyvo-muted hover:text-white transition-colors mb-2"
+            >
+              <ChevronLeft className="w-3 h-3" /> Changer de rôle
+            </button>
+            <div>
+              <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Email</label>
+              <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+                <Mail className="w-4 h-4 text-zyvo-muted shrink-0" />
+                <input
+                  type="email"
+                  placeholder="exemple@email.com"
+                  value={loginEmail}
+                  onChange={e => setLoginEmail(e.target.value)}
+                  className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+                  required
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-bold text-zyvo-muted mb-1.5 block">Mot de passe</label>
+              <div className="flex items-center gap-2 glass-premium rounded-xl px-4 h-12 border border-transparent focus-within:border-zyvo-gold/40 transition-all">
+                <Lock className="w-4 h-4 text-zyvo-muted shrink-0" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Votre mot de passe"
+                  value={loginPassword}
+                  onChange={e => setLoginPassword(e.target.value)}
+                  className="w-full bg-transparent outline-none text-sm font-semibold text-white placeholder:text-zyvo-muted"
+                  required
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-zyvo-muted hover:text-white transition-colors">
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full gradient-brand text-white font-bold py-3.5 rounded-xl shadow-lg hover:scale-[1.02] disabled:opacity-60 disabled:hover:scale-100 transition-all duration-300 glow-worm flex items-center justify-center gap-2"
+            >
+              {submitting ? 'Connexion...' : 'Se connecter'} <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+        )
       ) : (
         <form onSubmit={handleRegister} className="space-y-4">
           <div>

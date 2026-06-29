@@ -51,8 +51,10 @@ export function AuthProvider({ children }) {
     clearMockData()
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
+    const { data: profile } = await supabase.from('users').select('role').eq('id', data.user.id).single()
+    const actualRole = profile?.role || role
     const formatted = formatUser(data.user)
-    setUser({ ...formatted, role })
+    setUser({ ...formatted, role: actualRole })
     return data
   }
 

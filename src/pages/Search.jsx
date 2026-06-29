@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Search, SlidersHorizontal, Star, ArrowUpDown, X, Clock, TrendingUp, MapPin, Sparkles, RotateCcw } from 'lucide-react'
-import { providers } from '../data/mockData'
+import { getProviders } from '../lib/supabase'
 import ProviderCard from '../components/ProviderCard'
 import { Link } from 'react-router-dom'
 
@@ -46,8 +46,17 @@ export default function SearchPage() {
   const [minRating, setMinRating] = useState(0)
   const [recentSearches, setRecentSearches] = useState(loadRecent)
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [providers, setProviders] = useState([])
+  const [loading, setLoading] = useState(true)
   const inputRef = useRef(null)
   const suggestionRef = useRef(null)
+
+  useEffect(() => {
+    getProviders().then(data => {
+      setProviders(data)
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -428,7 +437,12 @@ export default function SearchPage() {
       )}
 
       {/* RESULTS */}
-      {sorted.length === 0 ? (
+      {loading ? (
+        <div className="mt-8 text-center py-10">
+          <div className="w-8 h-8 border-2 border-zyvo-gold/40 border-t-zyvo-gold rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-zyvo-muted mt-4">Chargement des prestataires...</p>
+        </div>
+      ) : sorted.length === 0 ? (
         <div className="mt-8 glass-premium rounded-3xl p-10 text-center">
           <div className="w-20 h-20 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Search className="w-8 h-8 text-white" strokeWidth={1.5} />
