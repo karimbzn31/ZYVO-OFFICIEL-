@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { User, Phone, MapPin, Mail, ChevronLeft, Sparkles, ArrowRight, ChevronDown, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '../context/auth'
 import { useToast } from '../context/toast'
@@ -58,7 +58,8 @@ const roleOptions = [
 ]
 
 export default function Auth() {
-  const [mode, setMode] = useState('login')
+  const [searchParams] = useSearchParams()
+  const [mode, setMode] = useState(searchParams.get('mode') === 'register' ? 'register' : 'login')
   const [loginRole, setLoginRole] = useState(null)
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')

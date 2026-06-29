@@ -24,7 +24,7 @@ export default function RoleModal({ open, onClose }) {
 
         <div className="space-y-3">
           <Link
-            to="/auth"
+            to="/auth?mode=register"
             onClick={onClose}
             className="flex items-center gap-4 w-full glass-premium-light rounded-2xl p-5 text-left group hover:bg-white/10 transition-all border border-transparent hover:border-zyvo-gold/20"
           >
