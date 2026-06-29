@@ -58,7 +58,7 @@ const roleOptions = [
 ]
 
 export default function Auth() {
-  const [mode, setMode] = useState('register')
+  const [mode, setMode] = useState('login')
   const [loginRole, setLoginRole] = useState(null)
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
