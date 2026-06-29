@@ -65,15 +65,7 @@ export function AuthProvider({ children }) {
     })
     if (error) throw error
     if (data.user) {
-      const { error: uErr } = await supabase.from('users').insert({
-        id: data.user.id,
-        name,
-        phone,
-        email: email || '',
-        city: city || '',
-        role,
-      }).select().single()
-      if (uErr) throw uErr
+      // public.users is auto-created by DB trigger on auth.users insert
 
       if (role === 'prestataire') {
         const { error: pErr } = await supabase.from('providers').insert({
